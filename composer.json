@@ -3,5 +3,7 @@
     "description": "ISAAC PHP Code Sniffer Baseliner",
     "type": "library",
     "license": "proprietary",
-    "require": {}
+    "require": {
+        "squizlabs/php_codesniffer": "^3.5"
+    }
 }
