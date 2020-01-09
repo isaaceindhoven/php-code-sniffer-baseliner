@@ -1,4 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-require sprintf('%s/vendor/autoload.php', dirname(__DIR__));
+use ISAAC\CodeSnifferBaseliner\Application;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$application = new Application();
+$exitCode = $application->run();
+exit($exitCode);
