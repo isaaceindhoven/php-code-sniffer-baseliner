@@ -13,5 +13,14 @@
     },
     "bin": [
         "bin/phpcs-baseliner"
-    ]
+    ],
+    "repositories": {
+        "isaac-php-code-sniffer": {
+            "type": "vcs",
+            "url": "git@gitlab.isaac.local:php-module/isaac-php-code-sniffer.git"
+        }
+    },
+    "require-dev": {
+        "isaac/php-code-sniffer": "^14.0"
+    }
 }
