@@ -1,0 +1,7 @@
+{
+    "name": "isaac/php-code-sniffer-baseliner",
+    "description": "ISAAC PHP Code Sniffer Baseliner",
+    "type": "library",
+    "license": "proprietary",
+    "require": {}
+}
