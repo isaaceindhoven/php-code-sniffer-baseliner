@@ -4,6 +4,8 @@
     "type": "library",
     "license": "proprietary",
     "require": {
+        "ext-json": "*",
+        "ext-simplexml": "*",
         "squizlabs/php_codesniffer": "^3.5"
     },
     "autoload": {
@@ -21,6 +23,7 @@
         }
     },
     "require-dev": {
-        "isaac/php-code-sniffer": "^14.0"
+        "isaac/php-code-sniffer": "^14.0",
+        "phpstan/phpstan": "^0.12.4"
     }
 }

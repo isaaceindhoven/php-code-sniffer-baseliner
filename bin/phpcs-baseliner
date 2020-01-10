@@ -1,10 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-use ISAAC\CodeSnifferBaseliner\Application;
+declare(strict_types=1);
+
+namespace ISAAC\CodeSnifferBaseliner;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-$application = new Application();
-$exitCode = $application->run();
+$application = Application::create();
+$exitCode = $application->run(...$argv);
 exit($exitCode);

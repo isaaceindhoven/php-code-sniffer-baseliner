@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset name="phpcs-isaac">
-    <file>.</file>
-    <exclude-pattern>./vendor</exclude-pattern>
-    <rule ref="ISAAC"/>
+  <file>.</file>
+  <exclude-pattern>./vendor</exclude-pattern>
+  <rule ref="ISAAC"/>
 </ruleset>
