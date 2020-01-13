@@ -15,7 +15,7 @@ composer config repositories.isaac-php-code-sniffer-baseliner vcs git@gitlab.isa
 Now require the package:
 
 ```shell script
-composer require --dev isaac/php-code-sniffer
+composer require --dev isaac/php-code-sniffer-baseliner
 ```
 
 ## Usage
