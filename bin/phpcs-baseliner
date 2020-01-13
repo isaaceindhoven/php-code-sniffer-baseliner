@@ -5,7 +5,14 @@ declare(strict_types=1);
 
 namespace ISAAC\CodeSnifferBaseliner;
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+use function file_exists;
+
+foreach ([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../../vendor/autoload.php'] as $autoloadPath) {
+    if (file_exists($autoloadPath)) {
+        require_once $autoloadPath;
+        break;
+    }
+}
 
 $application = Application::create();
 $exitCode = $application->run(...$argv);
