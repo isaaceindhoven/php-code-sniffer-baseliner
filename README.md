@@ -8,13 +8,13 @@ forbids new rule violations in existing files.
 
 First, add the path of this repo to the composer file in your project:
 
-```shell script
+```sh
 composer config repositories.isaac-php-code-sniffer-baseliner vcs git@gitlab.isaac.local:php-module/isaac-php-code-sniffer-baseliner.git
 ```
 
 Now require the package:
 
-```shell script
+```sh
 composer require --dev isaac/php-code-sniffer-baseliner
 ```
 
@@ -23,15 +23,19 @@ composer require --dev isaac/php-code-sniffer-baseliner
 In order to add file exclusions for each rule that fails to your PHP_CodeSniffer configuration, run the following
 command. (This assumes that you have a PHP_CodeSniffer config file in your project root.)
 
-```shell script
+```sh
 vendor/bin/phpcs-baseliner create-baseline
 ```
 
 To remove the baseline:
 
-```shell script
-vendor/bin/phpcs-baseliner clean-up-baseline
+```sh
+vendor/bin/phpcs-baseliner remove-baseline
 ```
 
 After you fix some of the failing rules, run the following command to remove exclusions for violations that do not occur
 anymore.  
+
+```sh
+vendor/bin/phpcs-baseliner clean-up-baseline
+```
