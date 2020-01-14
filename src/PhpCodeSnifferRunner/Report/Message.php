@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Report;
 
-use function array_slice;
 use function explode;
 use function implode;
+use function strpos;
 
 class Message
 {
@@ -62,9 +62,16 @@ class Message
         return $this->message;
     }
 
-    public function getShortRuleName(): string
+    public function getRuleName(): string
     {
-        return implode('.', array_slice(explode('.', $this->source), 0, 3));
+        $ruleNameParts = [];
+        foreach (explode('.', $this->source) as $ruleNamePart) {
+            if (strpos($ruleNamePart, '\\') !== false) {
+                break;
+            }
+            $ruleNameParts[] = $ruleNamePart;
+        }
+        return implode('.', $ruleNameParts);
     }
 
     public function getSeverity(): int

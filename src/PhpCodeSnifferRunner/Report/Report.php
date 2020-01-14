@@ -36,26 +36,26 @@ class Report
 
     public function createBaseline(): Baseline
     {
-        return new Baseline($this->getErrorFilenamesByShortRuleName());
+        return new Baseline($this->getErrorFilenamesByRuleName());
     }
 
     /**
      * @return string[][]
      */
-    private function getErrorFilenamesByShortRuleName(): array
+    private function getErrorFilenamesByRuleName(): array
     {
-        $errorFilenamesByShortRuleName = [];
+        $errorFilenamesByRuleName = [];
         foreach ($this->fileReportsByFilename as $filename => $fileReport) {
             foreach ($fileReport->getMessages() as $message) {
-                $shortRuleName = $message->getShortRuleName();
-                if (!array_key_exists($shortRuleName, $errorFilenamesByShortRuleName)) {
-                    $errorFilenamesByShortRuleName[$shortRuleName] = [];
+                $ruleName = $message->getRuleName();
+                if (!array_key_exists($ruleName, $errorFilenamesByRuleName)) {
+                    $errorFilenamesByRuleName[$ruleName] = [];
                 }
-                if (!in_array($filename, $errorFilenamesByShortRuleName[$shortRuleName], true)) {
-                    $errorFilenamesByShortRuleName[$shortRuleName][] = $filename;
+                if (!in_array($filename, $errorFilenamesByRuleName[$ruleName], true)) {
+                    $errorFilenamesByRuleName[$ruleName][] = $filename;
                 }
             }
         }
-        return $errorFilenamesByShortRuleName;
+        return $errorFilenamesByRuleName;
     }
 }
