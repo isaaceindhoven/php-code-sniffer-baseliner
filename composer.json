@@ -4,6 +4,7 @@
     "type": "library",
     "license": "proprietary",
     "require": {
+        "php": "^7.2",
         "ext-json": "*",
         "ext-simplexml": "*",
         "squizlabs/php_codesniffer": "^3.5"
