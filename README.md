@@ -6,10 +6,10 @@ forbids new rule violations in existing files.
 
 ## Installation
 
-First, add the path of this repo to the composer file in your project:
+First, configure the ISAAC composer package repository:
 
 ```sh
-composer config repositories.isaac-php-code-sniffer-baseliner vcs git@gitlab.isaac.local:php-module/isaac-php-code-sniffer-baseliner.git
+fin composer config repositories.isaac composer https://composer-packages.hq.isaac.nl/repository
 ```
 
 Now require the package:
