@@ -34,28 +34,8 @@ class Report
         return $this->totals;
     }
 
-    public function createBaseline(): Baseline
+    public function getFileReportsByFilename(): array
     {
-        return new Baseline($this->getErrorFilenamesByRuleName());
-    }
-
-    /**
-     * @return string[][]
-     */
-    private function getErrorFilenamesByRuleName(): array
-    {
-        $errorFilenamesByRuleName = [];
-        foreach ($this->fileReportsByFilename as $filename => $fileReport) {
-            foreach ($fileReport->getMessages() as $message) {
-                $ruleName = $message->getRuleName();
-                if (!array_key_exists($ruleName, $errorFilenamesByRuleName)) {
-                    $errorFilenamesByRuleName[$ruleName] = [];
-                }
-                if (!in_array($filename, $errorFilenamesByRuleName[$ruleName], true)) {
-                    $errorFilenamesByRuleName[$ruleName][] = $filename;
-                }
-            }
-        }
-        return $errorFilenamesByRuleName;
+        return $this->fileReportsByFilename;
     }
 }

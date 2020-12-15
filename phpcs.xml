@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ruleset name="phpcs-isaac">
-  <file>.</file>
-  <exclude-pattern>./vendor</exclude-pattern>
+<ruleset>
+  <!-- Specify all paths containing PHP files -->
+  <file>src</file>
+  <file>tests</file>
   <rule ref="ISAAC"/>
+  <config name="testVersion" value="7.3-8.0"/>
+  <arg name="cache"/>
 </ruleset>

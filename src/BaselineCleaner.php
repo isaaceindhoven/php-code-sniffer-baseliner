@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace ISAAC\CodeSnifferBaseliner;
 
+use ISAAC\CodeSnifferBaseliner\Filesystem\Filesystem;
 use ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Runner;
-
-use const PHP_EOL;
+use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\RemoveBaselineProcessor;
+use ISAAC\CodeSnifferBaseliner\Util\OutputWriter;
 
 class BaselineCleaner
 {
@@ -23,20 +24,38 @@ class BaselineCleaner
      */
     private $configFileReader;
     /**
-     * @var Config\ConfigFileWriter
+     * @var Filesystem
      */
-    private $configFileWriter;
+    private $filesystem;
+    /**
+     * @var Runner
+     */
+    private $runner;
+    /**
+     * @var RemoveBaselineProcessor
+     */
+    private $removeBaselineProcessor;
+    /**
+     * @var OutputWriter
+     */
+    private $outputWriter;
 
     public function __construct(
         BasePathFinder $basePathFinder,
         Config\ConfigFileFinder $configFileFinder,
         Config\ConfigFileReader $configFileReader,
-        Config\ConfigFileWriter $configFileWriter
+        Filesystem $filesystem,
+        Runner $runner,
+        RemoveBaselineProcessor $removeBaselineProcessor,
+        OutputWriter $outputWriter
     ) {
         $this->basePathFinder = $basePathFinder;
         $this->configFileFinder = $configFileFinder;
         $this->configFileReader = $configFileReader;
-        $this->configFileWriter = $configFileWriter;
+        $this->filesystem = $filesystem;
+        $this->runner = $runner;
+        $this->removeBaselineProcessor = $removeBaselineProcessor;
+        $this->outputWriter = $outputWriter;
     }
 
     public function cleanUp(): void
@@ -44,22 +63,35 @@ class BaselineCleaner
         $basePath = $this->basePathFinder->findBasePath();
         $configFilename = $this->configFileFinder->findConfigFile($basePath);
 
-        echo 'Temporary removing the baseline from the config file...' . PHP_EOL;
-
         $config = $this->configFileReader->readConfig($configFilename);
-        $temporaryConfig = clone $config;
-        $temporaryConfig->removeBaseline();
-        $this->configFileWriter->writeConfig($temporaryConfig, $configFilename);
+        foreach ($this->generateFilenamesRecursively($basePath, $config->getFiles()) as $filePath) {
+            $this->cleanUpFile($filePath);
+        }
+    }
 
-        echo 'Running PHP_CodeSniffer (this may take a while)...' . PHP_EOL;
+    private function generateFilenamesRecursively(string $directory, iterable $filenames): iterable
+    {
+        foreach ($filenames as $filename) {
+            $filePath = $directory . '/' . $filename;
+            if ($this->filesystem->isFile($filePath)) {
+                yield $filename;
+            } elseif ($this->filesystem->isDirectory($filePath)) {
+                $directoryPath = $filePath;
+                $filesInDirectory = $this->generateFilenamesRecursively(
+                    $directoryPath,
+                    $this->filesystem->getFilesInDirectory($filePath)
+                );
+                foreach ($filesInDirectory as $filenameInDirectory) {
+                    yield $directoryPath . '/' . $filenameInDirectory;
+                }
+            }
+        }
+    }
 
-        $report = (new Runner())->run($basePath);
-
-        echo 'Removing the baseline rules that pass...' . PHP_EOL;
-
-        $config->removeBaselineExclusionsNotInBaseline($report->createBaseline());
-        $this->configFileWriter->writeConfig($config, $configFilename);
-
-        echo 'Done cleaning up the baseline!' . PHP_EOL;
+    private function cleanUpFile(string $filePath): void
+    {
+        $originalFileContents = $this->filesystem->readContents($filePath);
+        $modifiedFileContents = $this->removeBaselineProcessor->removeBaselineFromFile($originalFileContents);
+        $this->filesystem->replaceContents($filePath, $modifiedFileContents);
     }
 }

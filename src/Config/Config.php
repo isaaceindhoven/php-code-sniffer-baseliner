@@ -28,6 +28,20 @@ class Config
         $this->document = $document;
     }
 
+    public function getFiles(): iterable
+    {
+        $files = (new DOMXPath($this->document))->query('/ruleset/file');
+        if ($files === false) {
+            throw new LogicException('XPath query failed.');
+        }
+        foreach ($files as $file) {
+            if (!$file instanceof DOMElement) {
+                continue;
+            }
+            yield trim($file->textContent);
+        }
+    }
+
     public function mergeBaseline(Baseline $baseline): void
     {
         if (count($this->document->childNodes) === 0) {
@@ -47,7 +61,7 @@ class Config
             $this->addFileExclusionsToRuleConfig($ruleConfig, $baseline->getFilesForRule($ruleName));
             $rulesConfigured[] = $ruleName;
         }
-        foreach ($baseline->getExcludedFilesByRule() as $ruleName => $filenames) {
+        foreach ($baseline->getViolatedRulesByFileAndLineNumber() as $ruleName => $filenames) {
             if (in_array($ruleName, $rulesConfigured, true)) {
                 continue;
             }

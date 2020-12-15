@@ -6,6 +6,7 @@ namespace ISAAC\CodeSnifferBaseliner;
 
 use Exception;
 use InvalidArgumentException;
+use ISAAC\CodeSnifferBaseliner\Baseline\BaselineFactory;
 use ISAAC\CodeSnifferBaseliner\Command\CleanUpBaseline;
 use ISAAC\CodeSnifferBaseliner\Command\CreateBaseline;
 use ISAAC\CodeSnifferBaseliner\Command\RemoveBaseline;
@@ -13,6 +14,12 @@ use ISAAC\CodeSnifferBaseliner\Command\ShowHelp;
 use ISAAC\CodeSnifferBaseliner\Config\ConfigFileFinder;
 use ISAAC\CodeSnifferBaseliner\Config\ConfigFileReader;
 use ISAAC\CodeSnifferBaseliner\Config\ConfigFileWriter;
+use ISAAC\CodeSnifferBaseliner\Filesystem\NativeFilesystem;
+use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\AddBaselineProcessor;
+use ISAAC\CodeSnifferBaseliner\Filesystem\FileProcessor;
+use ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Runner;
+use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\RemoveBaselineProcessor;
+use ISAAC\CodeSnifferBaseliner\Util\OutputWriter;
 use Throwable;
 
 use function array_shift;
@@ -30,9 +37,27 @@ class Application
         $configFileFinder = new ConfigFileFinder();
         $configFileReader = new ConfigFileReader();
         $configFileWriter = new ConfigFileWriter();
+        $filesystem = new NativeFilesystem();
+        $runner = new Runner();
+        $outputWriter = new OutputWriter();
         return new self(
-            new BaselineCreator($basePathFinder, $configFileFinder, $configFileReader, $configFileWriter),
-            new BaselineCleaner($basePathFinder, $configFileFinder, $configFileReader, $configFileWriter),
+            new BaselineCreator(
+                $basePathFinder,
+                $runner,
+                new BaselineFactory(),
+                $filesystem,
+                new AddBaselineProcessor(),
+                $outputWriter
+            ),
+            new BaselineCleaner(
+                $basePathFinder,
+                $configFileFinder,
+                $configFileReader,
+                $filesystem,
+                $runner,
+                new RemoveBaselineProcessor(),
+                $outputWriter
+            ),
             new BaselineRemover($basePathFinder, $configFileFinder, $configFileReader, $configFileWriter)
         );
     }
