@@ -24,6 +24,7 @@
         "bin/phpcs-baseliner"
     ],
     "require-dev": {
+        "isaac/composer-git-hooks-standard": "^1.2",
         "isaac/php-code-sniffer-standard": "^19.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^0.12.65",
@@ -34,5 +35,11 @@
     "config": {
         "sort-packages": true,
         "optimize-autoloader": true
+    },
+    "repositories": {
+        "isaac": {
+            "type": "composer",
+            "url": "https://composer-packages.hq.isaac.nl/repository"
+        }
     }
 }
