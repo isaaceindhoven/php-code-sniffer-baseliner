@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace ISAAC\CodeSnifferBaseliner\PhpTokenizer;
 
+use function in_array;
 use function json_encode;
+use function sprintf;
 use function substr;
 use function substr_count;
-
 use function token_name;
 
 use const PHP_EOL;
 use const T_COMMENT;
 use const T_CONSTANT_ENCAPSED_STRING;
+use const T_ENCAPSED_AND_WHITESPACE;
+use const T_START_HEREDOC;
 
 class Token
 {

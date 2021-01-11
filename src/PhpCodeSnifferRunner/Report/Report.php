@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Report;
 
-use ISAAC\CodeSnifferBaseliner\Baseline\Baseline;
-
-use function array_key_exists;
-use function in_array;
-
 class Report
 {
     /**
@@ -34,6 +29,9 @@ class Report
         return $this->totals;
     }
 
+    /**
+     * @return FileReport[]
+     */
     public function getFileReportsByFilename(): array
     {
         return $this->fileReportsByFilename;

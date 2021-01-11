@@ -6,11 +6,7 @@ namespace ISAAC\CodeSnifferBaseliner\Tests;
 
 use ISAAC\CodeSnifferBaseliner\BaselineCreator;
 use ISAAC\CodeSnifferBaseliner\BasePathFinder;
-use ISAAC\CodeSnifferBaseliner\Filesystem\FileReader;
-use ISAAC\CodeSnifferBaseliner\Filesystem\NativeFilesystem;
-use ISAAC\CodeSnifferBaseliner\Filesystem\FileWriter;
 use ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Runner;
-use ISAAC\CodeSnifferBaseliner\Tests\File\FileManipulatorFactory;
 use ISAAC\CodeSnifferBaseliner\Tests\File\MemoryFilesystem;
 use ISAAC\CodeSnifferBaseliner\Tests\PhpCodeSnifferRunner\Report\FileReportFactory;
 use ISAAC\CodeSnifferBaseliner\Tests\PhpCodeSnifferRunner\Report\MessageFactory;
@@ -21,6 +17,22 @@ use PHPUnit\Framework\TestCase;
 
 class BaselineCreatorTest extends TestCase
 {
+    private const ORIGINAL_FILE_CONTENTS = <<<'PHP'
+<?php
+echo 'test';
+PHP;
+    private const MANIPULATED_FILE_CONTENTS_1 = <<<'PHP'
+<?php
+// phpcs:ignore Violated.Rule -- baseline
+echo 'test';
+PHP;
+    private const MANIPULATED_FILE_CONTENTS_2 = <<<'PHP'
+<?php
+// phpcs:ignore Baz.Qux -- baseline
+// phpcs:ignore Foo.Bar -- baseline
+echo 'test';
+PHP;
+
     /**
      * @var BaselineCreator
      */
@@ -60,23 +72,11 @@ class BaselineCreatorTest extends TestCase
             ReportFactory::create()
         );
 
-        $this->filesystem->replaceContents('test.php', <<<'PHP'
-<?php
-echo 'test';
-PHP
-);
+        $this->filesystem->replaceContents('test.php', self::ORIGINAL_FILE_CONTENTS);
 
         $this->baselineCreator->create();
 
-        self::assertSame(
-            <<<'PHP'
-<?php
-// phpcs:ignore Violated.Rule -- baseline
-echo 'test';
-PHP
-,
-            $this->filesystem->readContents('test.php')
-        );
+        self::assertSame(self::MANIPULATED_FILE_CONTENTS_1, $this->filesystem->readContents('test.php'));
     }
 
     public function testCreateRepeatsAsLongAsFileAreChanged(): void
@@ -93,24 +93,10 @@ PHP
             ReportFactory::create()
         );
 
-        $this->filesystem->replaceContents('test.php', <<<'PHP'
-<?php
-echo 'test';
-PHP
-        );
+        $this->filesystem->replaceContents('test.php', self::ORIGINAL_FILE_CONTENTS);
 
         $this->baselineCreator->create();
 
-        self::assertSame(
-            <<<'PHP'
-<?php
-// phpcs:ignore Baz.Qux -- baseline
-// phpcs:ignore Foo.Bar -- baseline
-echo 'test';
-PHP
-            ,
-            $this->filesystem->readContents('test.php')
-        );
+        self::assertSame(self::MANIPULATED_FILE_CONTENTS_2, $this->filesystem->readContents('test.php'));
     }
-
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ISAAC\CodeSnifferBaseliner\PhpTokenizer;
 
 use function is_array;
-use function substr_count;
 use function token_get_all;
 
 class Tokenizer

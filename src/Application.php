@@ -7,18 +7,13 @@ namespace ISAAC\CodeSnifferBaseliner;
 use Exception;
 use InvalidArgumentException;
 use ISAAC\CodeSnifferBaseliner\Baseline\BaselineFactory;
-use ISAAC\CodeSnifferBaseliner\Command\CleanUpBaseline;
 use ISAAC\CodeSnifferBaseliner\Command\CreateBaseline;
-use ISAAC\CodeSnifferBaseliner\Command\RemoveBaseline;
 use ISAAC\CodeSnifferBaseliner\Command\ShowHelp;
-use ISAAC\CodeSnifferBaseliner\Config\ConfigFileFinder;
-use ISAAC\CodeSnifferBaseliner\Config\ConfigFileReader;
-use ISAAC\CodeSnifferBaseliner\Config\ConfigFileWriter;
 use ISAAC\CodeSnifferBaseliner\Filesystem\NativeFilesystem;
-use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\AddBaselineProcessor;
-use ISAAC\CodeSnifferBaseliner\Filesystem\FileProcessor;
 use ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Runner;
-use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\RemoveBaselineProcessor;
+use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\AddBaselineProcessor;
+use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\IgnoreCommentLineMerger;
+use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\IgnoreCommentLineParser;
 use ISAAC\CodeSnifferBaseliner\Util\OutputWriter;
 use Throwable;
 
@@ -33,32 +28,16 @@ class Application
 {
     public static function create(): self
     {
-        $basePathFinder = new BasePathFinder();
-        $configFileFinder = new ConfigFileFinder();
-        $configFileReader = new ConfigFileReader();
-        $configFileWriter = new ConfigFileWriter();
-        $filesystem = new NativeFilesystem();
-        $runner = new Runner();
-        $outputWriter = new OutputWriter();
+        $ignoreCommentParser = new IgnoreCommentLineParser();
         return new self(
             new BaselineCreator(
-                $basePathFinder,
-                $runner,
+                new BasePathFinder(),
+                new Runner(),
                 new BaselineFactory(),
-                $filesystem,
-                new AddBaselineProcessor(),
-                $outputWriter
-            ),
-            new BaselineCleaner(
-                $basePathFinder,
-                $configFileFinder,
-                $configFileReader,
-                $filesystem,
-                $runner,
-                new RemoveBaselineProcessor(),
-                $outputWriter
-            ),
-            new BaselineRemover($basePathFinder, $configFileFinder, $configFileReader, $configFileWriter)
+                new NativeFilesystem(),
+                new AddBaselineProcessor($ignoreCommentParser, new IgnoreCommentLineMerger($ignoreCommentParser)),
+                new OutputWriter()
+            )
         );
     }
 
@@ -66,23 +45,11 @@ class Application
      * @var BaselineCreator
      */
     private $baselineCreator;
-    /**
-     * @var BaselineCleaner
-     */
-    private $baselineCleaner;
-    /**
-     * @var BaselineRemover
-     */
-    private $baselineRemover;
 
     public function __construct(
-        BaselineCreator $baselineCreator,
-        BaselineCleaner $baselineCleaner,
-        BaselineRemover $baselineRemover
+        BaselineCreator $baselineCreator
     ) {
         $this->baselineCreator = $baselineCreator;
-        $this->baselineCleaner = $baselineCleaner;
-        $this->baselineRemover = $baselineRemover;
     }
 
     public function run(string ...$arguments): int
@@ -113,10 +80,6 @@ class Application
         switch ($commandName) {
             case 'create-baseline':
                 return new CreateBaseline();
-            case 'clean-up-baseline':
-                return new CleanUpBaseline();
-            case 'remove-baseline':
-                return new RemoveBaseline();
             case 'help':
             default:
                 return $this->getShowHelpCommand($binaryName);
@@ -132,10 +95,6 @@ class Application
     {
         if ($command instanceof CreateBaseline) {
             $this->baselineCreator->create();
-        } elseif ($command instanceof CleanUpBaseline) {
-            $this->baselineCleaner->cleanUp();
-        } elseif ($command instanceof RemoveBaseline) {
-            $this->baselineRemover->remove();
         } elseif ($command instanceof ShowHelp) {
             $this->showHelp($command);
         } else {
@@ -152,8 +111,6 @@ Usage: {$command->getCommandName()} [command]
 
 Available commands:
   create-baseline      Create a new baseline
-  clean-up-baseline    Remove errors from the baseline that do not occur anymore
-  remove-baseline      Remove the baseline
 
 HELP;
     }

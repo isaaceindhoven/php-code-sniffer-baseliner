@@ -9,11 +9,9 @@ use ISAAC\CodeSnifferBaseliner\PhpTokenizer\Tokenizer;
 
 use function array_key_exists;
 use function array_splice;
-use function array_unique;
 use function explode;
 use function implode;
 use function is_array;
-use function is_string;
 use function preg_match;
 use function sort;
 use function sprintf;
@@ -24,8 +22,22 @@ use const PHP_EOL;
 
 class AddBaselineProcessor
 {
-    const PHPCS_IGNORE_COMMENT_REGULAR_EXPRESSION
-        = '`^(?<instruction>\\s*//\\s*phpcs:ignore)(?<rules> [^-]+)?( --(?<message>.*))?$`';
+    /**
+     * @var IgnoreCommentLineParser
+     */
+    private $ignoreCommentParser;
+    /**
+     * @var IgnoreCommentLineMerger
+     */
+    private $ignoreCommentMerger;
+
+    public function __construct(
+        IgnoreCommentLineParser $ignoreCommentLineParser,
+        IgnoreCommentLineMerger $ignoreCommentLineMerger
+    ) {
+        $this->ignoreCommentParser = $ignoreCommentLineParser;
+        $this->ignoreCommentMerger = $ignoreCommentLineMerger;
+    }
 
     /**
      * @param string[][] $ruleExclusionsByLineNumber
@@ -51,7 +63,7 @@ class AddBaselineProcessor
 
     /**
      * Inserts line(s) with comments to ignore specific rules.
-     * @param string[] &$lines
+     * @param string[] $lines
      * @param string[] $ruleExclusions
      * @return int number of lines inserted
      */
@@ -62,22 +74,23 @@ class AddBaselineProcessor
         TokenizedSourceCode $originalTokenizedSourceCode,
         int $originalLineNumber
     ): int {
-        if ($lineNumber === 1) {
-            $lastTokenAtFirstLine = $originalTokenizedSourceCode->getLastTokenAtLine(1);
-            // TODO: decide what to do when a multiline string starts on the first line
-            if (!$lastTokenAtFirstLine->isPartOfString()) {
-                $lines[0] .= sprintf(' %s', $this->generateInstructionComment($ruleExclusions, 'ignore'));
-            }
+        if ($originalLineNumber === 1) {
+            $this->ignoreInline($lines, $originalTokenizedSourceCode, $originalLineNumber, $ruleExclusions);
             return 0;
         }
 
         if (!$this->canInsertCommentLineBefore($originalLineNumber, $originalTokenizedSourceCode)) {
-            return $this->insertEnableDisableComments($lines, $originalTokenizedSourceCode, $lineNumber,
-                $ruleExclusions);
+            return $this->insertEnableDisableComments(
+                $lines,
+                $originalTokenizedSourceCode,
+                $lineNumber,
+                $ruleExclusions
+            );
         }
 
-        if ($this->isIgnoreComment($lines[$lineNumber - 2])) {
-            $lines[$lineNumber - 2] = $this->mergeIgnoreComment($lines[$lineNumber - 2], $ruleExclusions);
+        $lineBefore = &$lines[$lineNumber - 2];
+        if ($this->ignoreCommentParser->isIgnoreComment($lineBefore)) {
+            $lineBefore = $this->ignoreCommentMerger->mergeIgnoreCommentLine($lineBefore, $ruleExclusions);
             return 0;
         }
 
@@ -87,6 +100,25 @@ class AddBaselineProcessor
         return 1;
     }
 
+    /**
+     * @param string[] $lines
+     * @param string[] $ruleExclusions
+     */
+    private function ignoreInline(
+        array &$lines,
+        TokenizedSourceCode $tokenizedSourceCode,
+        int $lineNumber,
+        array $ruleExclusions
+    ): void {
+        $lastTokenAtFirstLine = $tokenizedSourceCode->getLastTokenAtLine($lineNumber);
+        if ($lastTokenAtFirstLine !== null && !$lastTokenAtFirstLine->isPartOfString()) {
+            $lines[$lineNumber - 1] .= sprintf(' %s', $this->generateInstructionComment($ruleExclusions, 'ignore'));
+        }
+    }
+
+    /**
+     * @param string[] $ruleExclusions
+     */
     private function generateInstructionComment(
         array $ruleExclusions,
         string $instruction,
@@ -105,11 +137,11 @@ class AddBaselineProcessor
 
         $firstTokenAtLineNumber = $tokenizedSourceCode->getFirstTokenEndingAtOrAfterLine($lineNumber);
 
-        return !$firstTokenAtLineNumber->isPartOfString();
+        return $firstTokenAtLineNumber !== null && !$firstTokenAtLineNumber->isPartOfString();
     }
 
     /**
-     * @param string[] &$lines
+     * @param string[] $lines
      * @param string[] $ruleExclusions
      * @return int number of lines inserted
      */
@@ -136,6 +168,9 @@ class AddBaselineProcessor
         return 2;
     }
 
+    /**
+     * @param string[] $lines
+     */
     private function insertLineBefore(array &$lines, int $lineNumber, string $contents): void
     {
         $indentation = array_key_exists($lineNumber - 1, $lines)
@@ -153,56 +188,10 @@ class AddBaselineProcessor
         return $matches['indent'];
     }
 
-    private function isIgnoreComment(string $line): bool
-    {
-        return preg_match(self::PHPCS_IGNORE_COMMENT_REGULAR_EXPRESSION, $line) === 1;
-    }
-
-    private function mergeIgnoreComment(string $line, array $ruleExclusions): string
-    {
-        preg_match(self::PHPCS_IGNORE_COMMENT_REGULAR_EXPRESSION, $line, $matches);
-        if (!is_array($matches) || !array_key_exists('instruction', $matches) || !is_string($matches['instruction'])) {
-            // TODO throw exception + handle
-        }
-
-        $existingRuleExclusions = [];
-        if (array_key_exists('rules', $matches) && is_string($matches['rules'])) {
-            foreach (explode(',', $matches['rules']) as $rule) {
-                $trimmedRule = trim($rule);
-                if ($trimmedRule === '') {
-                    continue;
-                }
-                $existingRuleExclusions[] = $trimmedRule;
-            }
-        }
-        if (count($existingRuleExclusions) === 0) {
-            // Do not modify line if no rules are specified
-            return $line;
-        }
-        $ruleExclusions = array_unique(array_merge($existingRuleExclusions, $ruleExclusions));
-        sort($ruleExclusions);
-
-        $messages = [];
-        if (array_key_exists('message', $matches) && is_string($matches['message'])) {
-            $trimmedMessage = trim($matches['message']);
-            if ($trimmedMessage !== '') {
-                $messages[] = $trimmedMessage;
-            }
-        }
-        $messages[] = 'baseline';
-
-        return sprintf(
-            '%s %s -- %s',
-            $matches['instruction'],
-            implode(', ', $ruleExclusions),
-            implode('; ', $messages)
-        );
-    }
-
     private function determineCommentStartBeforeLine(int $lineNumber, TokenizedSourceCode $tokenizedSourceCode): string
     {
         $firstTokenEndingAtOrAfterLine = $tokenizedSourceCode->getFirstTokenEndingAtOrAfterLine($lineNumber);
-        if ($firstTokenEndingAtOrAfterLine->isMultiLineComment()) {
+        if ($firstTokenEndingAtOrAfterLine !== null && $firstTokenEndingAtOrAfterLine->isMultiLineComment()) {
             $commentLines = explode(PHP_EOL, $firstTokenEndingAtOrAfterLine->getContents());
             $commentLineContents = $lineNumber < $firstTokenEndingAtOrAfterLine->getEndingLineNumber()
                 ? $commentLines[$lineNumber - $firstTokenEndingAtOrAfterLine->getStartingLineNumber()]

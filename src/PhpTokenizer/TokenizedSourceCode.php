@@ -9,10 +9,14 @@ use Iterator;
 use IteratorAggregate;
 
 use function array_key_exists;
+use function array_keys;
 use function array_map;
 use function array_merge;
+use function count;
 use function implode;
-use function var_dump;
+use function max;
+
+use const PHP_EOL;
 
 /**
  * @implements IteratorAggregate<Token>
@@ -24,7 +28,7 @@ class TokenizedSourceCode implements IteratorAggregate
      */
     private $tokensByStartingLineNumber = [];
     /**
-     * @var Token[][]
+     * @var array<int, Token[]>
      */
     private $tokensByEndingLineNumber = [];
 
@@ -70,9 +74,8 @@ class TokenizedSourceCode implements IteratorAggregate
             return null;
         }
 
-        return $this->tokensByStartingLineNumber[$tokenStartingLineNumber][
-            count($this->tokensByStartingLineNumber[$tokenStartingLineNumber]) - 1
-        ];
+        $lastTokenIndex = count($this->tokensByStartingLineNumber[$tokenStartingLineNumber]) - 1;
+        return $this->tokensByStartingLineNumber[$tokenStartingLineNumber][$lastTokenIndex];
     }
 
     /**
@@ -85,7 +88,7 @@ class TokenizedSourceCode implements IteratorAggregate
 
     public function __toString(): string
     {
-        return implode(PHP_EOL, array_map(function (Token $token): string {
+        return implode(PHP_EOL, array_map(static function (Token $token): string {
             return (string) $token;
         }, array_merge(...$this->tokensByStartingLineNumber)));
     }

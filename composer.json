@@ -25,7 +25,9 @@
     ],
     "require-dev": {
         "isaac/php-code-sniffer-standard": "^19.0",
-        "phpstan/phpstan": "^0.12.59",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan": "^0.12.65",
+        "phpstan/phpstan-phpunit": "^0.12.17",
         "phpunit/phpunit": "^9.5"
     },
     "minimum-stability": "stable",
