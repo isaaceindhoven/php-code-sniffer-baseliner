@@ -21,21 +21,8 @@ composer require --dev isaac/php-code-sniffer-baseliner
 ## Usage
 
 In order to add file exclusions for each rule that fails to your PHP_CodeSniffer configuration, run the following
-command. (This assumes that you have a PHP_CodeSniffer config file in your project root.)
+command.
 
 ```sh
 vendor/bin/phpcs-baseliner create-baseline
-```
-
-To remove the baseline:
-
-```sh
-vendor/bin/phpcs-baseliner remove-baseline
-```
-
-After you fix some of the failing rules, run the following command to remove exclusions for violations that do not occur
-anymore.  
-
-```sh
-vendor/bin/phpcs-baseliner clean-up-baseline
 ```

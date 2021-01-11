@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Report;
 
-use function explode;
-use function implode;
-use function strpos;
-
 class Message
 {
     /**
@@ -62,16 +58,9 @@ class Message
         return $this->message;
     }
 
-    public function getRuleName(): string
+    public function getSource(): string
     {
-        $ruleNameParts = [];
-        foreach (explode('.', $this->source) as $ruleNamePart) {
-            if (strpos($ruleNamePart, '\\') !== false) {
-                break;
-            }
-            $ruleNameParts[] = $ruleNamePart;
-        }
-        return implode('.', $ruleNameParts);
+        return $this->source;
     }
 
     public function getSeverity(): int
@@ -87,6 +76,16 @@ class Message
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function isError(): bool
+    {
+        return $this->type === 'ERROR';
+    }
+
+    public function isWarning(): bool
+    {
+        return $this->type === 'WARNING';
     }
 
     public function getLine(): int
