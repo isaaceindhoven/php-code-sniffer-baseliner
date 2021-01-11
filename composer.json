@@ -4,26 +4,35 @@
     "type": "library",
     "license": "proprietary",
     "require": {
+        "php": "~7.3.0 || ~7.4.0 || ~8.0.0",
+        "ext-dom": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
         "squizlabs/php_codesniffer": "^3.5"
     },
     "autoload": {
         "psr-4": {
-            "ISAAC\\CodeSnifferBaseliner\\": "src"
+            "ISAAC\\CodeSnifferBaseliner\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ISAAC\\CodeSnifferBaseliner\\Tests\\": "tests/"
         }
     },
     "bin": [
         "bin/phpcs-baseliner"
     ],
-    "repositories": {
-        "isaac-php-code-sniffer": {
-            "type": "vcs",
-            "url": "git@gitlab.isaac.local:php-module/isaac-php-code-sniffer.git"
-        }
-    },
     "require-dev": {
-        "isaac/php-code-sniffer": "^14.0",
-        "phpstan/phpstan": "^0.12.4"
+        "isaac/php-code-sniffer-standard": "^19.0",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan": "^0.12.65",
+        "phpstan/phpstan-phpunit": "^0.12.17",
+        "phpunit/phpunit": "^9.5"
+    },
+    "minimum-stability": "stable",
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
     }
 }

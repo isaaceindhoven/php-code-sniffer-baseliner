@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace ISAAC\CodeSnifferBaseliner;
 
-use ISAAC\CodeSnifferBaseliner\Config\ConfigFileFinder;
-use ISAAC\CodeSnifferBaseliner\Config\ConfigFileReader;
-use ISAAC\CodeSnifferBaseliner\Config\ConfigFileWriter;
+use ISAAC\CodeSnifferBaseliner\Baseline\BaselineFactory;
+use ISAAC\CodeSnifferBaseliner\Filesystem\Filesystem;
 use ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Runner;
+use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\AddBaselineProcessor;
+use ISAAC\CodeSnifferBaseliner\Util\OutputWriter;
 
-use const PHP_EOL;
+use function sprintf;
 
 class BaselineCreator
 {
@@ -18,59 +19,96 @@ class BaselineCreator
      */
     private $basePathFinder;
     /**
-     * @var ConfigFileFinder
+     * @var Runner
      */
-    private $configFileFinder;
+    private $runner;
     /**
-     * @var ConfigFileReader
+     * @var BaselineFactory
      */
-    private $configFileReader;
+    private $baselineFactory;
     /**
-     * @var ConfigFileWriter
+     * @var Filesystem
      */
-    private $configFileWriter;
+    private $filesystem;
+    /**
+     * @var AddBaselineProcessor
+     */
+    private $addBaselineProcessor;
+    /**
+     * @var OutputWriter
+     */
+    private $outputWriter;
 
     public function __construct(
         BasePathFinder $basePathFinder,
-        ConfigFileFinder $configFileFinder,
-        ConfigFileReader $configFileReader,
-        ConfigFileWriter $configFileWriter
+        Runner $runner,
+        BaselineFactory $baselineFactory,
+        Filesystem $filesystem,
+        AddBaselineProcessor $addBaselineProcessor,
+        OutputWriter $outputWriter
     ) {
         $this->basePathFinder = $basePathFinder;
-        $this->configFileFinder = $configFileFinder;
-        $this->configFileReader = $configFileReader;
-        $this->configFileWriter = $configFileWriter;
+        $this->runner = $runner;
+        $this->baselineFactory = $baselineFactory;
+        $this->filesystem = $filesystem;
+        $this->addBaselineProcessor = $addBaselineProcessor;
+        $this->outputWriter = $outputWriter;
     }
 
     public function create(): void
     {
         $basePath = $this->basePathFinder->findBasePath();
-        $configFilename = $this->configFileFinder->findConfigFile($basePath);
 
-        echo 'Running PHP_CodeSniffer (this may take a while)...' . PHP_EOL;
+        do {
+            $this->outputWriter->writeLine('Running PHP_CodeSniffer (this may take a while)...');
 
-        $report = (new Runner())->run($basePath);
+            $report = $this->runner->run($basePath);
 
-        if ($report->getTotals()->getErrors() === 0 && $report->getTotals()->getWarnings() === 0) {
-            echo 'PHP_CodeSniffer did not report any errors.' . PHP_EOL;
-            return;
-        }
+            if ($report->getTotals()->getErrors() === 0 && $report->getTotals()->getWarnings() === 0) {
+                $this->outputWriter->writeLine('PHP_CodeSniffer did not report any errors.');
+                return;
+            }
 
-        echo 'Creating the baseline...' . PHP_EOL;
+            $this->outputWriter->writeLine('Creating the baseline...');
 
-        $baseline = $report->createBaseline();
+            $baseline = $this->baselineFactory->createFromReport($report);
 
-        echo 'Merging the baseline with the config file...' . PHP_EOL;
+            $this->outputWriter->writeLine('Adding baseline comments to PHP files...');
 
-        $this->configureBaseline($configFilename, $baseline);
+            $baselineHasBeenChanged = $this->writeBaseline($baseline);
+        } while ($baselineHasBeenChanged);
 
-        echo 'Done creating the baseline!' . PHP_EOL;
+        $this->outputWriter->writeLine('Done creating the baseline!');
     }
 
-    private function configureBaseline(string $configFilename, Baseline\Baseline $baseline): void
+    private function writeBaseline(Baseline\Baseline $baseline): bool
     {
-        $config = $this->configFileReader->readConfig($configFilename);
-        $config->mergeBaseline($baseline);
-        $this->configFileWriter->writeConfig($config, $configFilename);
+        $baselineHasBeenChanged = false;
+        foreach ($baseline->getViolatedRulesByFileAndLineNumber() as $file => $violatedRulesByLineNumber) {
+            $fileHasBeenChanged = $this->addRuleExclusionsByLineNumber(
+                $file,
+                $violatedRulesByLineNumber
+            );
+            $baselineHasBeenChanged = $baselineHasBeenChanged || $fileHasBeenChanged;
+        }
+        return $baselineHasBeenChanged;
+    }
+
+    /**
+     * @param string[][] $ruleExclusionsByLineNumber
+     */
+    public function addRuleExclusionsByLineNumber(string $file, array $ruleExclusionsByLineNumber): bool
+    {
+        $fileContents = $this->filesystem->readContents($file);
+        $modifiedFileContents = $this->addBaselineProcessor->addRuleExclusionsByLineNumber(
+            $fileContents,
+            $ruleExclusionsByLineNumber
+        );
+        if ($fileContents !== $modifiedFileContents) {
+            $this->filesystem->replaceContents($file, $modifiedFileContents);
+            $this->outputWriter->writeLine(sprintf('%s has been modified.', $file));
+            return true;
+        }
+        return false;
     }
 }

@@ -1,0 +1,2 @@
+#!/bin/bash
+fin exec vendor/bin/phpcs --basepath="/var/www/" "$@"

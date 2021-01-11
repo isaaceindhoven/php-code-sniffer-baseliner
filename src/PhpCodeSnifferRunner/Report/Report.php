@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Report;
 
-use ISAAC\CodeSnifferBaseliner\Baseline\Baseline;
-
-use function array_key_exists;
-use function in_array;
-
 class Report
 {
     /**
@@ -34,28 +29,11 @@ class Report
         return $this->totals;
     }
 
-    public function createBaseline(): Baseline
-    {
-        return new Baseline($this->getErrorFilenamesByRuleName());
-    }
-
     /**
-     * @return string[][]
+     * @return FileReport[]
      */
-    private function getErrorFilenamesByRuleName(): array
+    public function getFileReportsByFilename(): array
     {
-        $errorFilenamesByRuleName = [];
-        foreach ($this->fileReportsByFilename as $filename => $fileReport) {
-            foreach ($fileReport->getMessages() as $message) {
-                $ruleName = $message->getRuleName();
-                if (!array_key_exists($ruleName, $errorFilenamesByRuleName)) {
-                    $errorFilenamesByRuleName[$ruleName] = [];
-                }
-                if (!in_array($filename, $errorFilenamesByRuleName[$ruleName], true)) {
-                    $errorFilenamesByRuleName[$ruleName][] = $filename;
-                }
-            }
-        }
-        return $errorFilenamesByRuleName;
+        return $this->fileReportsByFilename;
     }
 }
