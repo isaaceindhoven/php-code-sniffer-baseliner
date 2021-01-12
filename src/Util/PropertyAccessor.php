@@ -6,13 +6,14 @@ namespace ISAAC\CodeSnifferBaseliner\Util;
 
 use RuntimeException;
 
+use function array_key_exists;
+use function get_object_vars;
 use function gettype;
 use function is_array;
 use function is_bool;
 use function is_int;
 use function is_object;
 use function is_string;
-use function property_exists;
 use function sprintf;
 
 class PropertyAccessor
@@ -70,10 +71,11 @@ class PropertyAccessor
      */
     private static function getProperty(object $object, string $propertyName, string $objectName)
     {
-        if (!property_exists($object, $propertyName)) {
+        $properties = get_object_vars($object);
+        if (!array_key_exists($propertyName, $properties)) {
             throw new RuntimeException(sprintf('Missing property \'%s\' in %s.', $propertyName, $objectName));
         }
-        return $object->{$propertyName};
+        return $properties[$propertyName];
     }
 
     /**

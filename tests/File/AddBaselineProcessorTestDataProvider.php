@@ -596,6 +596,24 @@ exit;
 PHP
         ,
     ];
+    private const STAR_PREFIX_IN_DOC_COMMENT = [
+        <<<'PHP'
+<?php
+/**
+ * test
+ */
+PHP
+        ,
+        [3 => ['Foo.Bar']],
+        <<<'PHP'
+<?php
+/**
+ * @phpcs:ignore Foo.Bar -- baseline
+ * test
+ */
+PHP
+        ,
+    ];
 
     private const ALL = [
         'basic' => self::BASIC,
@@ -632,6 +650,7 @@ PHP
         'above single comment block' => self::ABOVE_SINGLE_COMMENT_BLOCK,
         'star prefix in comment block' => self::STAR_PREFIX_IN_COMMENT_BLOCK,
         'star prefix in comment block at last line' => self::STAR_PREFIX_IN_COMMENT_BLOCK_LAST_LINE,
+        'star prefix in doc comment' => self::STAR_PREFIX_IN_DOC_COMMENT,
     ];
 
     /**
