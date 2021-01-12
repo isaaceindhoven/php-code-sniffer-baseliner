@@ -11,8 +11,7 @@ class ApplicationTest extends TestCase
 {
     public function testCreate(): void
     {
-        $application = Application::create();
-
-        self::assertInstanceOf(Application::class, $application);
+        Application::create();
+        $this->addToAssertionCount(1);
     }
 }

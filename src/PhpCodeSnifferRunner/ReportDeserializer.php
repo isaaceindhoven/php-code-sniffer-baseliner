@@ -64,7 +64,7 @@ class ReportDeserializer
     }
 
     /**
-     * @param Message[] $normalizedMessages
+     * @param mixed[] $normalizedMessages
      * @return Message[]
      */
     private function denormalizeMessages(array $normalizedMessages): array
