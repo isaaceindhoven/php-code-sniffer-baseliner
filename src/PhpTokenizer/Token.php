@@ -14,6 +14,7 @@ use function token_name;
 use const PHP_EOL;
 use const T_COMMENT;
 use const T_CONSTANT_ENCAPSED_STRING;
+use const T_DOC_COMMENT;
 use const T_ENCAPSED_AND_WHITESPACE;
 use const T_START_HEREDOC;
 
@@ -66,7 +67,7 @@ class Token
 
     public function isMultiLineComment(): bool
     {
-        return $this->type === T_COMMENT
+        return in_array($this->type, [T_COMMENT, T_DOC_COMMENT], true)
             && $this->getEndingLineNumber() > $this->getStartingLineNumber()
             && substr($this->contents, 0, 2) === '/*';
     }
