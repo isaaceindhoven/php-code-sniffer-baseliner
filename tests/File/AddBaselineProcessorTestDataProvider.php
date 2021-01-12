@@ -637,6 +637,16 @@ test
 PHP
         ,
     ];
+    private const WRONG_LINE_ENDINGS = [
+        "<?php\r\necho 'test';",
+        [2 => ['Foo.Bar']],
+        <<<'PHP'
+<?php
+// phpcs:ignore Foo.Bar -- baseline
+echo 'test';
+PHP
+        ,
+    ];
 
     private const ALL = [
         'basic' => self::BASIC,
@@ -675,6 +685,7 @@ PHP
         'star prefix in comment block at last line' => self::STAR_PREFIX_IN_COMMENT_BLOCK_LAST_LINE,
         'star prefix in doc comment' => self::STAR_PREFIX_IN_DOC_COMMENT,
         'multiline string with multiple violations' => self::MULTI_LINE_STRING_WITH_MULTIPLE_VIOLATIONS,
+        'wrong line endings' => self::WRONG_LINE_ENDINGS,
     ];
 
     /**

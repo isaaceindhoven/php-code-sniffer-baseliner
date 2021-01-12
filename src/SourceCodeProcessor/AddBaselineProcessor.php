@@ -13,6 +13,7 @@ use function explode;
 use function implode;
 use function is_array;
 use function preg_match;
+use function preg_split;
 use function sort;
 use function sprintf;
 use function substr;
@@ -38,7 +39,7 @@ class AddBaselineProcessor
      */
     public function addRuleExclusionsByLineNumber(string $sourceCode, array $ruleExclusionsByLineNumber): string
     {
-        $lines = explode(PHP_EOL, $sourceCode);
+        $lines = preg_split(sprintf("/\r?\n/"), $sourceCode);
         $tokenizedSourceCode = (new Tokenizer())->tokenize($sourceCode);
 
         $lineNumbersAdded = [];
