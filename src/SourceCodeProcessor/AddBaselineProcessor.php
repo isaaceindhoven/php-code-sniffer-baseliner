@@ -23,20 +23,14 @@ use const PHP_EOL;
 class AddBaselineProcessor
 {
     /**
-     * @var IgnoreCommentLineParser
+     * @var InstructionCommentLineParser
      */
     private $ignoreCommentParser;
-    /**
-     * @var IgnoreCommentLineMerger
-     */
-    private $ignoreCommentMerger;
 
     public function __construct(
-        IgnoreCommentLineParser $ignoreCommentLineParser,
-        IgnoreCommentLineMerger $ignoreCommentLineMerger
+        InstructionCommentLineParser $ignoreCommentLineParser
     ) {
         $this->ignoreCommentParser = $ignoreCommentLineParser;
-        $this->ignoreCommentMerger = $ignoreCommentLineMerger;
     }
 
     /**
@@ -47,15 +41,16 @@ class AddBaselineProcessor
         $lines = explode(PHP_EOL, $sourceCode);
         $tokenizedSourceCode = (new Tokenizer())->tokenize($sourceCode);
 
-        $addedLines = 0;
-        foreach ($ruleExclusionsByLineNumber as $lineNumber => $ruleExclusions) {
-            $addedLines += $this->addRuleExclusions(
+        $lineNumbersAdded = [];
+        foreach ($ruleExclusionsByLineNumber as $originalLineNumber => $ruleExclusions) {
+            $this->addRuleExclusions(
                 $lines,
-                $lineNumber + $addedLines,
+                $originalLineNumber,
                 $ruleExclusions,
                 $tokenizedSourceCode,
-                $lineNumber
+                $lineNumbersAdded
             );
+            sort($lineNumbersAdded);
         }
 
         return implode(PHP_EOL, $lines);
@@ -65,39 +60,34 @@ class AddBaselineProcessor
      * Inserts line(s) with comments to ignore specific rules.
      * @param string[] $lines
      * @param string[] $ruleExclusions
-     * @return int number of lines inserted
+     * @param int[] $lineNumbersAdded
      */
     private function addRuleExclusions(
         array &$lines,
-        int $lineNumber,
+        int $originalLineNumber,
         array $ruleExclusions,
         TokenizedSourceCode $originalTokenizedSourceCode,
-        int $originalLineNumber
-    ): int {
+        array &$lineNumbersAdded
+    ): void {
         if ($originalLineNumber === 1) {
             $this->ignoreInline($lines, $originalTokenizedSourceCode, $originalLineNumber, $ruleExclusions);
-            return 0;
+            return;
         }
 
         if (!$this->canInsertCommentLineBefore($originalLineNumber, $originalTokenizedSourceCode)) {
-            return $this->insertEnableDisableComments(
+            $this->insertEnableDisableComments(
                 $lines,
                 $originalTokenizedSourceCode,
-                $lineNumber,
-                $ruleExclusions
+                $originalLineNumber,
+                $ruleExclusions,
+                $lineNumbersAdded
             );
-        }
-
-        $lineBefore = &$lines[$lineNumber - 2];
-        if ($this->ignoreCommentParser->isIgnoreComment($lineBefore)) {
-            $lineBefore = $this->ignoreCommentMerger->mergeIgnoreCommentLine($lineBefore, $ruleExclusions);
-            return 0;
+            return;
         }
 
         $commentStart = $this->determineCommentStartBeforeLine($originalLineNumber, $originalTokenizedSourceCode);
-        $ignoreComment = $this->generateInstructionComment($ruleExclusions, 'ignore', $commentStart);
-        $this->insertLineBefore($lines, $lineNumber, $ignoreComment);
-        return 1;
+        $ignoreComment = (new InstructionComment('ignore', $ruleExclusions, ['baseline'], '', $commentStart));
+        $this->insertOrMergeComment($lines, $originalLineNumber, $ignoreComment, $lineNumbersAdded);
     }
 
     /**
@@ -112,20 +102,9 @@ class AddBaselineProcessor
     ): void {
         $lastTokenAtFirstLine = $tokenizedSourceCode->getLastTokenAtLine($lineNumber);
         if ($lastTokenAtFirstLine !== null && !$lastTokenAtFirstLine->isPartOfString()) {
-            $lines[$lineNumber - 1] .= sprintf(' %s', $this->generateInstructionComment($ruleExclusions, 'ignore'));
+            $commentFormatted = (new InstructionComment('ignore', $ruleExclusions))->formatAsLine();
+            $lines[$lineNumber - 1] .= sprintf(' %s', $commentFormatted);
         }
-    }
-
-    /**
-     * @param string[] $ruleExclusions
-     */
-    private function generateInstructionComment(
-        array $ruleExclusions,
-        string $instruction,
-        string $commentStart = '// '
-    ): string {
-        sort($ruleExclusions);
-        return sprintf('%sphpcs:%s %s -- baseline', $commentStart, $instruction, implode(', ', $ruleExclusions));
     }
 
     private function canInsertCommentLineBefore(int $lineNumber, TokenizedSourceCode $tokenizedSourceCode): bool
@@ -143,40 +122,53 @@ class AddBaselineProcessor
     /**
      * @param string[] $lines
      * @param string[] $ruleExclusions
-     * @return int number of lines inserted
+     * @param int[] $lineNumbersAdded
      */
     private function insertEnableDisableComments(
         array &$lines,
         TokenizedSourceCode $tokenizedSourceCode,
-        int $violationLineNumber,
-        array $ruleExclusions
-    ): int {
-        $disableCommentBeforeLineNumber = $violationLineNumber - 1;
+        int $originalLineNumber,
+        array $ruleExclusions,
+        array &$lineNumbersAdded
+    ): void {
+        $disableCommentBeforeLineNumber = $originalLineNumber - 1;
         while (!$this->canInsertCommentLineBefore($disableCommentBeforeLineNumber, $tokenizedSourceCode)) {
             $disableCommentBeforeLineNumber--;
         }
-        $disableComment = $this->generateInstructionComment($ruleExclusions, 'disable');
-        $this->insertLineBefore($lines, $disableCommentBeforeLineNumber, $disableComment);
+        $disableComment = (new InstructionComment('disable', $ruleExclusions));
+        $this->insertOrMergeComment($lines, $disableCommentBeforeLineNumber, $disableComment, $lineNumbersAdded);
 
-        $enableCommentBeforeLineNumber = $violationLineNumber + 1;
+        $enableCommentBeforeLineNumber = $originalLineNumber + 1;
         while (!$this->canInsertCommentLineBefore($enableCommentBeforeLineNumber, $tokenizedSourceCode)) {
             $enableCommentBeforeLineNumber++;
         }
-        $enableComment = $this->generateInstructionComment($ruleExclusions, 'enable');
-        $this->insertLineBefore($lines, $enableCommentBeforeLineNumber + 1, $enableComment);
-
-        return 2;
+        $enableComment = (new InstructionComment('enable', $ruleExclusions));
+        $this->insertOrMergeComment($lines, $enableCommentBeforeLineNumber, $enableComment, $lineNumbersAdded);
     }
 
     /**
      * @param string[] $lines
+     * @param int[] $lineNumbersAdded
      */
-    private function insertLineBefore(array &$lines, int $lineNumber, string $contents): void
-    {
+    private function insertOrMergeComment(
+        array &$lines,
+        int $originalLineNumber,
+        InstructionComment $instructionComment,
+        array &$lineNumbersAdded
+    ): void {
+        $lineNumber = $this->getActualLineNumber($originalLineNumber, $lineNumbersAdded);
+        $instruction = $instructionComment->getInstruction();
+        $existingComment = $this->ignoreCommentParser->parse($lines[$lineNumber - 2], $instruction);
+        if ($existingComment !== null) {
+            $existingComment->merge($instructionComment);
+            $lines[$lineNumber - 2] = $existingComment->formatAsLine();
+            return;
+        }
         $indentation = array_key_exists($lineNumber - 1, $lines)
             ? $this->determineIndentation($lines[$lineNumber - 1])
             : '';
-        array_splice($lines, $lineNumber - 1, 0, $indentation . $contents);
+        array_splice($lines, $lineNumber - 1, 0, $indentation . $instructionComment->formatAsLine());
+        $lineNumbersAdded[] = $lineNumber;
     }
 
     private function determineIndentation(string $line): string
@@ -203,5 +195,19 @@ class AddBaselineProcessor
         }
 
         return '// ';
+    }
+
+    /**
+     * @param int[] $lineNumbersAdded
+     */
+    private function getActualLineNumber(int $originalLineNumber, array $lineNumbersAdded): int
+    {
+        $lineNumber = $originalLineNumber;
+        foreach ($lineNumbersAdded as $lineNumberAdded) {
+            if ($lineNumber >= $lineNumberAdded) {
+                $lineNumber++;
+            }
+        }
+        return $lineNumber;
     }
 }
