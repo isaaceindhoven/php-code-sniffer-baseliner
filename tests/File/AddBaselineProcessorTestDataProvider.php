@@ -614,6 +614,29 @@ PHP
 PHP
         ,
     ];
+    private const MULTI_LINE_STRING_WITH_MULTIPLE_VIOLATIONS = [
+        <<<'PHP'
+<?php
+echo '
+test
+test
+test
+';
+PHP
+        ,
+        [3 => ['Foo.Bar'], 4 => ['Foo.Bar']],
+        <<<'PHP'
+<?php
+// phpcs:disable Foo.Bar -- baseline
+echo '
+test
+test
+test
+';
+// phpcs:enable Foo.Bar -- baseline
+PHP
+        ,
+    ];
 
     private const ALL = [
         'basic' => self::BASIC,
@@ -651,6 +674,7 @@ PHP
         'star prefix in comment block' => self::STAR_PREFIX_IN_COMMENT_BLOCK,
         'star prefix in comment block at last line' => self::STAR_PREFIX_IN_COMMENT_BLOCK_LAST_LINE,
         'star prefix in doc comment' => self::STAR_PREFIX_IN_DOC_COMMENT,
+        'multiline string with multiple violations' => self::MULTI_LINE_STRING_WITH_MULTIPLE_VIOLATIONS,
     ];
 
     /**

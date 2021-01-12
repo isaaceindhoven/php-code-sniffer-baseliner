@@ -12,8 +12,7 @@ use ISAAC\CodeSnifferBaseliner\Command\ShowHelp;
 use ISAAC\CodeSnifferBaseliner\Filesystem\NativeFilesystem;
 use ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Runner;
 use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\AddBaselineProcessor;
-use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\IgnoreCommentLineMerger;
-use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\IgnoreCommentLineParser;
+use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\InstructionCommentLineParser;
 use ISAAC\CodeSnifferBaseliner\Util\OutputWriter;
 use Throwable;
 
@@ -28,14 +27,13 @@ class Application
 {
     public static function create(): self
     {
-        $ignoreCommentParser = new IgnoreCommentLineParser();
         return new self(
             new BaselineCreator(
                 new BasePathFinder(),
                 new Runner(),
                 new BaselineFactory(),
                 new NativeFilesystem(),
-                new AddBaselineProcessor($ignoreCommentParser, new IgnoreCommentLineMerger($ignoreCommentParser)),
+                new AddBaselineProcessor(new InstructionCommentLineParser()),
                 new OutputWriter()
             )
         );

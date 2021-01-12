@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ISAAC\CodeSnifferBaseliner\Tests\SourceCodeProcessor;
 
-use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\IgnoreCommentLineParser;
+use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\InstructionCommentLineParser;
 
 class IgnoreCommentLineParserFactory
 {
-    public static function create(): IgnoreCommentLineParser
+    public static function create(): InstructionCommentLineParser
     {
-        return new IgnoreCommentLineParser();
+        return new InstructionCommentLineParser();
     }
 }
