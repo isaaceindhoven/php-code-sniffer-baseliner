@@ -569,7 +569,7 @@ PHP
         <<<'PHP'
 <?php
 /*
- * @phpcs:ignore Foo.Bar -- baseline
+ * phpcs:ignore Foo.Bar -- baseline
  * test
  */
 exit;
@@ -590,7 +590,7 @@ PHP
 <?php
 /*
  * test
- * @phpcs:ignore Foo.Bar -- baseline
+ * phpcs:ignore Foo.Bar -- baseline
  */
 exit;
 PHP
@@ -608,7 +608,7 @@ PHP
         <<<'PHP'
 <?php
 /**
- * @phpcs:ignore Foo.Bar -- baseline
+ * phpcs:ignore Foo.Bar -- baseline
  * test
  */
 PHP
