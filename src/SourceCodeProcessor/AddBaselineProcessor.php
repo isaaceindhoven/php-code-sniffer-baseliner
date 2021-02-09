@@ -190,7 +190,7 @@ class AddBaselineProcessor
                 ? $commentLines[$lineNumber - $firstTokenEndingAtOrAfterLine->getStartingLineNumber()]
                 : $commentLines[$lineNumber - $firstTokenEndingAtOrAfterLine->getStartingLineNumber() - 1];
             if (substr(trim($commentLineContents), 0, 2) === '* ') {
-                return '* @';
+                return '* ';
             }
             return '';
         }
