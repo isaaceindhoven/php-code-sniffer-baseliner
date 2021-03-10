@@ -17,13 +17,12 @@ class InstructionCommentLineParser
         = '`^(?<indentation>\\s*)(?<comment_start>//\\s*)phpcs:(?<instruction>ignore|disable|enable)' .
         '(?<rules> [^-]+)?( --(?<message>.*))?$`';
 
-    public function parse(string $line, string $instruction): ?InstructionComment
+    public function parse(string $line): ?InstructionComment
     {
         if (
             preg_match(self::PHPCS_IGNORE_COMMENT_REGULAR_EXPRESSION, $line, $matches) !== 1
             || !is_array($matches)
             || !array_key_exists('instruction', $matches)
-            || $matches['instruction'] !== $instruction
         ) {
             return null;
         }
