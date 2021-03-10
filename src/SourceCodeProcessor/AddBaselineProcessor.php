@@ -159,11 +159,16 @@ class AddBaselineProcessor
     ): void {
         $lineNumber = $this->getActualLineNumber($originalLineNumber, $lineNumbersAdded);
         $instruction = $instructionComment->getInstruction();
-        $existingComment = $this->ignoreCommentParser->parse($lines[$lineNumber - 2], $instruction);
+        $existingComment = $this->ignoreCommentParser->parse($lines[$lineNumber - 2]);
         if ($existingComment !== null) {
-            $existingComment->merge($instructionComment);
-            $lines[$lineNumber - 2] = $existingComment->formatAsLine();
-            return;
+            if ($existingComment->getInstruction() === $instruction) {
+                $existingComment->merge($instructionComment);
+                $lines[$lineNumber - 2] = $existingComment->formatAsLine();
+                return;
+            } elseif ($existingComment->getInstruction() === 'ignore') {
+                // We must not place a new instruction directly after an existing ignore instruction
+                $lineNumber--;
+            }
         }
         $indentation = array_key_exists($lineNumber - 1, $lines)
             ? $this->determineIndentation($lines[$lineNumber - 1])

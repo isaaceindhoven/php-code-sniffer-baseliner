@@ -637,6 +637,30 @@ test
 PHP
         ,
     ];
+    private const MULTI_LINE_STRING_VIOLATIONS_ON_FIRST_AND_SECOND_LINE = [
+        <<<'PHP'
+<?php
+echo '
+test
+test
+test
+';
+PHP
+        ,
+        [2 => ['Foo.Bar'], 3 => ['Baz.Qux']],
+        <<<'PHP'
+<?php
+// phpcs:disable Baz.Qux -- baseline
+// phpcs:ignore Foo.Bar -- baseline
+echo '
+test
+test
+test
+';
+// phpcs:enable Baz.Qux -- baseline
+PHP
+        ,
+    ];
     private const WRONG_LINE_ENDINGS = [
         "<?php\r\necho 'test';",
         [2 => ['Foo.Bar']],
@@ -685,6 +709,8 @@ PHP
         'star prefix in comment block at last line' => self::STAR_PREFIX_IN_COMMENT_BLOCK_LAST_LINE,
         'star prefix in doc comment' => self::STAR_PREFIX_IN_DOC_COMMENT,
         'multiline string with multiple violations' => self::MULTI_LINE_STRING_WITH_MULTIPLE_VIOLATIONS,
+        'multiline string violations firsta and second line' =>
+            self::MULTI_LINE_STRING_VIOLATIONS_ON_FIRST_AND_SECOND_LINE,
         'wrong line endings' => self::WRONG_LINE_ENDINGS,
     ];
 
