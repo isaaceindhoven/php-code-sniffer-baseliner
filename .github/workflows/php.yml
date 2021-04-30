@@ -11,43 +11,69 @@ on:
     - "master"
 
 jobs:
-  build:
 
+  composer-validate:
     runs-on: "ubuntu-latest"
+    steps:
+    - uses: "actions/checkout@v2"
+    - run: "composer validate --strict"
 
+  phpcs:
+    runs-on: "ubuntu-latest"
+    steps:
+    - uses: "actions/checkout@v2"
+    - uses: "shivammathur/setup-php@v2"
+      with:
+        coverage: "none"
+        php-version: "7.3"
+    - uses: "actions/cache@v2"
+      with:
+        path: "~/.composer/cache"
+        key: "php-7.3-composer-${{ hashFiles('**/composer.json') }}"
+        restore-keys: "php-7.3-composer-"
+    - run: "composer update --prefer-dist --no-interaction --no-progress"
+    - run: "vendor/bin/phpcs"
+
+  phpstan:
+    runs-on: "ubuntu-latest"
     strategy:
       matrix:
         php-version:
         - "7.3"
         - "7.4"
         - "8.0"
-
     steps:
     - uses: "actions/checkout@v2"
-
     - uses: "shivammathur/setup-php@v2"
       with:
         coverage: "none"
         php-version: "${{ matrix.php-version }}"
-
-    - name: "Validate composer.json"
-      run: "composer validate --strict"
-
-    - name: "Cache dependencies"
-      uses: "actions/cache@v2"
+    - uses: "actions/cache@v2"
       with:
         path: "~/.composer/cache"
         key: "php-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}"
         restore-keys: "php-${{ matrix.php-version }}-composer-"
+    - run: "composer update --prefer-dist --no-interaction --no-progress"
+    - run: "vendor/bin/phpstan analyze --configuration=phpstan.neon"
 
-    - name: "Install dependencies"
-      run: "composer install --prefer-dist --no-interaction --no-progress"
-
-    - name: "Run PHPUnit"
-      run: "vendor/bin/phpunit"
-
-    - name: "Run PHP_CodeSniffer"
-      run: "vendor/bin/phpcs"
-
-    - name: "Run PHPStan"
-      run: "vendor/bin/phpstan analyze --configuration=phpstan.neon"
+  phpunit:
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        php-version:
+        - "7.3"
+        - "7.4"
+        - "8.0"
+    steps:
+    - uses: "actions/checkout@v2"
+    - uses: "shivammathur/setup-php@v2"
+      with:
+        coverage: "none"
+        php-version: "${{ matrix.php-version }}"
+    - uses: "actions/cache@v2"
+      with:
+        path: "~/.composer/cache"
+        key: "php-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}"
+        restore-keys: "php-${{ matrix.php-version }}-composer-"
+    - run: "composer update --prefer-dist --no-interaction --no-progress"
+    - run: "vendor/bin/phpunit"
