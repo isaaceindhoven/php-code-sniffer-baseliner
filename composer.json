@@ -2,7 +2,7 @@
     "name": "isaac/php-code-sniffer-baseliner",
     "description": "ISAAC PHP Code Sniffer Baseliner",
     "type": "library",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
         "php": "~7.3.0 || ~7.4.0 || ~8.0.0",
         "ext-dom": "*",
