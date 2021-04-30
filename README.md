@@ -26,10 +26,10 @@ vendor/bin/phpcs-baseliner create-baseline
 
 ## How does it work?
 
-First, the tool runs `vendor/bin/phpcs` and captures the report. Based on the report output, it will add a
-`// phpcs:ignore` instruction above the lines in the report. It will only ignore the sniffs that actually are violated.
-In rare cases, adding these instructions could introduce new violations. Therefore, this process is repeated until no
-violations are reported by `phpcs`.
+First, the tool runs `vendor/bin/phpcs` and captures the report. Based on the report output, it will add
+`// phpcs:ignore` instructions to the source code for each violation. It will only ignore the sniffs that actually are
+violated. In rare cases, adding these instructions could introduce new violations. Therefore, this process is repeated
+until no violations are reported by `phpcs`.
 
 ## Example
 
