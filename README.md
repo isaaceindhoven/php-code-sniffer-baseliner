@@ -2,7 +2,7 @@
 
 This tool enables you to integrate [PHP_CodeSniffer][php-code-sniffer] into an existing
 project by automatically adding `phpcs:ignore` and `phpcs:disable`/`phpcs:enable` instructions throughout the codebase
-as a baseline. This makes sure that you can make PHP_CodeSniffer pass without changing any source code, making it
+as a baseline. This allows you to make PHP_CodeSniffer pass without changing any source code, making it
 possible to use PHP_CodeSniffer in e.g. continuous integration pipelines or git hooks. This way, you can enforce that
 all new code adheres to your coding standard without touching the existing code.
 
