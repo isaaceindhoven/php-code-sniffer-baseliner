@@ -45,3 +45,9 @@ jobs:
 
     - name: "Run PHPUnit"
       run: "vendor/bin/phpunit"
+
+    - name: "Run PHP_CodeSniffer"
+      run: "vendor/bin/phpcs"
+
+    - name: "Run PHPStan"
+      run: "vendor/bin/phpstan analyze --configuration=phpstan.neon"
