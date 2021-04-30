@@ -23,10 +23,10 @@ class ReportFactory
         $fileReportsByFilename = $fileReportsByFilenameOrDefault !== null ? $fileReportsByFilenameOrDefault : [];
         return new Report(
             $totals !== null ? $totals : TotalsFactory::create(
-                (int) array_sum(array_map(static function (FileReport $fileReport): int {
+                array_sum(array_map(static function (FileReport $fileReport): int {
                     return $fileReport->getErrorCount();
                 }, $fileReportsByFilename)),
-                (int) array_sum(array_map(static function (FileReport $fileReport): int {
+                array_sum(array_map(static function (FileReport $fileReport): int {
                     return $fileReport->getWarningCount();
                 }, $fileReportsByFilename)),
             ),
