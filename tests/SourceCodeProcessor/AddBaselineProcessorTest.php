@@ -23,7 +23,7 @@ class AddBaselineProcessorTest extends TestCase
 
     /**
      * @param string[][] $ruleExclusionsByLineNumber
-     * @dataProvider \ISAAC\CodeSnifferBaseliner\Tests\File\AddBaselineProcessorTestDataProvider::provide
+     * @dataProvider \ISAAC\CodeSnifferBaseliner\Tests\SourceCodeProcessor\AddBaselineProcessorTestDataProvider::provide
      */
     public function testAddRuleExclusionsByLineNumber(
         string $fileContents,
