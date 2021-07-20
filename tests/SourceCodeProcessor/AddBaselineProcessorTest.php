@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ISAAC\CodeSnifferBaseliner\Tests\File;
+namespace ISAAC\CodeSnifferBaseliner\Tests\SourceCodeProcessor;
 
 use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\AddBaselineProcessor;
-use ISAAC\CodeSnifferBaseliner\Tests\SourceCodeProcessor\AddBaselineProcessorFactory;
 use PHPUnit\Framework\TestCase;
 
 class AddBaselineProcessorTest extends TestCase

@@ -7,7 +7,7 @@ namespace ISAAC\CodeSnifferBaseliner\Tests;
 use ISAAC\CodeSnifferBaseliner\BaselineCreator;
 use ISAAC\CodeSnifferBaseliner\BasePathFinder;
 use ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Runner;
-use ISAAC\CodeSnifferBaseliner\Tests\File\MemoryFilesystem;
+use ISAAC\CodeSnifferBaseliner\Tests\Filesystem\MemoryFilesystem;
 use ISAAC\CodeSnifferBaseliner\Tests\PhpCodeSnifferRunner\Report\FileReportFactory;
 use ISAAC\CodeSnifferBaseliner\Tests\PhpCodeSnifferRunner\Report\MessageFactory;
 use ISAAC\CodeSnifferBaseliner\Tests\PhpCodeSnifferRunner\Report\ReportFactory;

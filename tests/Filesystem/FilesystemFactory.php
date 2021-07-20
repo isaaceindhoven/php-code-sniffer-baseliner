@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ISAAC\CodeSnifferBaseliner\Tests\File;
+namespace ISAAC\CodeSnifferBaseliner\Tests\Filesystem;
 
 use ISAAC\CodeSnifferBaseliner\Filesystem\Filesystem;
 
