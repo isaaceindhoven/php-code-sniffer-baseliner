@@ -60,7 +60,7 @@ class TokenizedSourceCode implements IteratorAggregate
         return $this->tokensByEndingLineNumber[$tokenEndingLineNumber][0];
     }
 
-    public function getLastTokenAtLine(int $lineNumber): ?Token
+    public function getLastTokenAtLineIgnoringWhitespace(int $lineNumber): ?Token
     {
         $tokenStartingLineNumber = $lineNumber;
         while (
@@ -75,6 +75,12 @@ class TokenizedSourceCode implements IteratorAggregate
         }
 
         $lastTokenIndex = count($this->tokensByStartingLineNumber[$tokenStartingLineNumber]) - 1;
+        while (
+            $this->tokensByStartingLineNumber[$tokenStartingLineNumber][$lastTokenIndex]->isWhiteSpace()
+            && $lastTokenIndex > 0
+        ) {
+            $lastTokenIndex--;
+        }
         return $this->tokensByStartingLineNumber[$tokenStartingLineNumber][$lastTokenIndex];
     }
 

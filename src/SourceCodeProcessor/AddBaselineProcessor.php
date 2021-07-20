@@ -103,7 +103,7 @@ class AddBaselineProcessor
         int $lineNumber,
         array $ruleExclusions
     ): void {
-        $lastTokenAtFirstLine = $tokenizedSourceCode->getLastTokenAtLine($lineNumber);
+        $lastTokenAtFirstLine = $tokenizedSourceCode->getLastTokenAtLineIgnoringWhitespace($lineNumber);
         if ($lastTokenAtFirstLine === null) {
             return;
         }
