@@ -72,6 +72,11 @@ class Token
             && substr($this->contents, 0, 2) === '/*';
     }
 
+    public function isDocComment(): bool
+    {
+        return $this->type === T_DOC_COMMENT;
+    }
+
     public function __toString(): string
     {
         return sprintf(

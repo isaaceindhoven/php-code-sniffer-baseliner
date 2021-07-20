@@ -117,7 +117,9 @@ class AddBaselineProcessor
 
         $firstTokenAtLineNumber = $tokenizedSourceCode->getFirstTokenEndingAtOrAfterLine($lineNumber);
 
-        return $firstTokenAtLineNumber !== null && !$firstTokenAtLineNumber->isPartOfString();
+        return $firstTokenAtLineNumber !== null
+            && !$firstTokenAtLineNumber->isPartOfString()
+            && !$firstTokenAtLineNumber->isDocComment();
     }
 
     /**

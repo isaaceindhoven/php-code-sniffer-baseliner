@@ -596,7 +596,7 @@ exit;
 PHP
         ,
     ];
-    private const STAR_PREFIX_IN_DOC_COMMENT = [
+    private const MULTILINE_DOC_COMMENT = [
         <<<'PHP'
 <?php
 /**
@@ -607,10 +607,11 @@ PHP
         [3 => ['Foo.Bar']],
         <<<'PHP'
 <?php
+// phpcs:disable Foo.Bar -- baseline
 /**
- * phpcs:ignore Foo.Bar -- baseline
  * test
  */
+// phpcs:enable Foo.Bar -- baseline
 PHP
         ,
     ];
@@ -707,7 +708,7 @@ PHP
         'above single comment block' => self::ABOVE_SINGLE_COMMENT_BLOCK,
         'star prefix in comment block' => self::STAR_PREFIX_IN_COMMENT_BLOCK,
         'star prefix in comment block at last line' => self::STAR_PREFIX_IN_COMMENT_BLOCK_LAST_LINE,
-        'star prefix in doc comment' => self::STAR_PREFIX_IN_DOC_COMMENT,
+        'multiline doc comment' => self::MULTILINE_DOC_COMMENT,
         'multiline string with multiple violations' => self::MULTI_LINE_STRING_WITH_MULTIPLE_VIOLATIONS,
         'multiline string violations firsta and second line' =>
             self::MULTI_LINE_STRING_VIOLATIONS_ON_FIRST_AND_SECOND_LINE,
