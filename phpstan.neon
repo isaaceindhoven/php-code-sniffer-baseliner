@@ -4,5 +4,6 @@ parameters:
     level: 'max'
     excludes_analyse:
     - './vendor'
+    - './tests/Fixtures'
 includes:
 	- vendor/phpstan/phpstan/conf/bleedingEdge.neon

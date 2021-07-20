@@ -57,6 +57,17 @@ test';
 PHP
         ,
     ];
+    private const ON_FIRST_LINE_MERGE_WITH_EXISTING = [
+        <<<'PHP'
+<?php // phpcs:ignore Foo.Bar
+PHP
+        ,
+        [1 => ['Baz.Qux']],
+        <<<'PHP'
+<?php // phpcs:ignore Baz.Qux, Foo.Bar -- baseline
+PHP
+        ,
+    ];
     private const MULTIPLE_LINES = [
         <<<'PHP'
 <?php
@@ -678,6 +689,7 @@ PHP
         'on first line' => self::ON_FIRST_LINE,
         'on first line with multiple tokens' => self::ON_FIRST_LINE_WITH_MULTIPLE_TOKENS,
         'on first line with multiline string' => self::ON_FIRST_LINE_WITH_MULTILINE_STRING,
+        'on first line merge with existing' => self::ON_FIRST_LINE_MERGE_WITH_EXISTING,
         'multiple lines' => self::MULTIPLE_LINES,
         'multiple lines including first line' => self::MULTIPLE_LINES_INCLUDING_FIRST_LINE,
         'multiple rules per line' => self::MULTIPLE_RULES_PER_LINE,
