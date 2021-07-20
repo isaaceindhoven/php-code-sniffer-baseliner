@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ISAAC\CodeSnifferBaseliner\Tests\File;
+namespace ISAAC\CodeSnifferBaseliner\Tests\SourceCodeProcessor;
 
 use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\AddBaselineProcessor;
-use ISAAC\CodeSnifferBaseliner\Tests\SourceCodeProcessor\AddBaselineProcessorFactory;
 use PHPUnit\Framework\TestCase;
 
 class AddBaselineProcessorTest extends TestCase
@@ -24,7 +23,7 @@ class AddBaselineProcessorTest extends TestCase
 
     /**
      * @param string[][] $ruleExclusionsByLineNumber
-     * @dataProvider \ISAAC\CodeSnifferBaseliner\Tests\File\AddBaselineProcessorTestDataProvider::provide
+     * @dataProvider \ISAAC\CodeSnifferBaseliner\Tests\SourceCodeProcessor\AddBaselineProcessorTestDataProvider::provide
      */
     public function testAddRuleExclusionsByLineNumber(
         string $fileContents,

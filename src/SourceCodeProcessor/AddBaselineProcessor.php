@@ -14,8 +14,10 @@ use function implode;
 use function is_array;
 use function preg_match;
 use function preg_split;
+use function rtrim;
 use function sort;
 use function sprintf;
+use function strlen;
 use function substr;
 use function trim;
 
@@ -101,9 +103,21 @@ class AddBaselineProcessor
         int $lineNumber,
         array $ruleExclusions
     ): void {
-        $lastTokenAtFirstLine = $tokenizedSourceCode->getLastTokenAtLine($lineNumber);
-        if ($lastTokenAtFirstLine !== null && !$lastTokenAtFirstLine->isPartOfString()) {
-            $commentFormatted = (new InstructionComment('ignore', $ruleExclusions))->formatAsLine();
+        $lastTokenAtFirstLine = $tokenizedSourceCode->getLastTokenAtLineIgnoringWhitespace($lineNumber);
+        if ($lastTokenAtFirstLine === null) {
+            return;
+        }
+        $instructionComment = new InstructionComment('ignore', $ruleExclusions);
+        $lastTokenContents = rtrim($lastTokenAtFirstLine->getContents(), "\n\r");
+        $existingInstruction = $this->ignoreCommentParser->parse($lastTokenContents);
+        if ($existingInstruction !== null && $existingInstruction->canMerge($instructionComment)) {
+            $existingInstruction->merge($instructionComment);
+            $lineContentsWithoutInstructionComment = substr($lines[$lineNumber - 1], 0, -strlen($lastTokenContents));
+            $lines[$lineNumber - 1] = $lineContentsWithoutInstructionComment . $existingInstruction->formatAsLine();
+            return;
+        }
+        if (!$lastTokenAtFirstLine->isPartOfString()) {
+            $commentFormatted = $instructionComment->formatAsLine();
             $lines[$lineNumber - 1] .= sprintf(' %s', $commentFormatted);
         }
     }
@@ -117,7 +131,9 @@ class AddBaselineProcessor
 
         $firstTokenAtLineNumber = $tokenizedSourceCode->getFirstTokenEndingAtOrAfterLine($lineNumber);
 
-        return $firstTokenAtLineNumber !== null && !$firstTokenAtLineNumber->isPartOfString();
+        return $firstTokenAtLineNumber !== null
+            && !$firstTokenAtLineNumber->isPartOfString()
+            && !$firstTokenAtLineNumber->isDocComment();
     }
 
     /**
@@ -158,10 +174,9 @@ class AddBaselineProcessor
         array &$lineNumbersAdded
     ): void {
         $lineNumber = $this->getActualLineNumber($originalLineNumber, $lineNumbersAdded);
-        $instruction = $instructionComment->getInstruction();
         $existingComment = $this->ignoreCommentParser->parse($lines[$lineNumber - 2]);
         if ($existingComment !== null) {
-            if ($existingComment->getInstruction() === $instruction) {
+            if ($existingComment->canMerge($instructionComment)) {
                 $existingComment->merge($instructionComment);
                 $lines[$lineNumber - 2] = $existingComment->formatAsLine();
                 return;

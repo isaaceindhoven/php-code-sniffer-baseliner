@@ -10,7 +10,7 @@ use ISAAC\CodeSnifferBaseliner\BasePathFinder;
 use ISAAC\CodeSnifferBaseliner\Filesystem\Filesystem;
 use ISAAC\CodeSnifferBaseliner\PhpCodeSnifferRunner\Runner;
 use ISAAC\CodeSnifferBaseliner\SourceCodeProcessor\AddBaselineProcessor;
-use ISAAC\CodeSnifferBaseliner\Tests\File\FilesystemFactory;
+use ISAAC\CodeSnifferBaseliner\Tests\Filesystem\FilesystemFactory;
 use ISAAC\CodeSnifferBaseliner\Tests\PhpCodeSnifferRunner\RunnerFactory;
 use ISAAC\CodeSnifferBaseliner\Tests\SourceCodeProcessor\AddBaselineProcessorFactory;
 use ISAAC\CodeSnifferBaseliner\Util\OutputWriter;

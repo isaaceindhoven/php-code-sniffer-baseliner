@@ -65,6 +65,11 @@ class InstructionComment
         return count($this->rules) > 0;
     }
 
+    public function canMerge(InstructionComment $instructionComment): bool
+    {
+        return $this->instruction === $instructionComment->instruction;
+    }
+
     public function merge(InstructionComment $instructionComment): void
     {
         if ($this->instruction !== $instructionComment->instruction) {

@@ -17,6 +17,7 @@ use const T_CONSTANT_ENCAPSED_STRING;
 use const T_DOC_COMMENT;
 use const T_ENCAPSED_AND_WHITESPACE;
 use const T_START_HEREDOC;
+use const T_WHITESPACE;
 
 class Token
 {
@@ -70,6 +71,16 @@ class Token
         return in_array($this->type, [T_COMMENT, T_DOC_COMMENT], true)
             && $this->getEndingLineNumber() > $this->getStartingLineNumber()
             && substr($this->contents, 0, 2) === '/*';
+    }
+
+    public function isDocComment(): bool
+    {
+        return $this->type === T_DOC_COMMENT;
+    }
+
+    public function isWhiteSpace(): bool
+    {
+        return $this->type === T_WHITESPACE;
     }
 
     public function __toString(): string

@@ -1,0 +1,5 @@
+{
+  "require": {
+    "isaac/php-code-sniffer-standard": "^22.0"
+  }
+}

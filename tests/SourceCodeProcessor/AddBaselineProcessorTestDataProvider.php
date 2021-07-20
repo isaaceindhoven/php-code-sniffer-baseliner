@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ISAAC\CodeSnifferBaseliner\Tests\File;
+namespace ISAAC\CodeSnifferBaseliner\Tests\SourceCodeProcessor;
 
 class AddBaselineProcessorTestDataProvider
 {
@@ -54,6 +54,17 @@ PHP
         <<<'PHP'
 <?php echo 'test
 test';
+PHP
+        ,
+    ];
+    private const ON_FIRST_LINE_MERGE_WITH_EXISTING = [
+        <<<'PHP'
+<?php // phpcs:ignore Foo.Bar
+PHP
+        ,
+        [1 => ['Baz.Qux']],
+        <<<'PHP'
+<?php // phpcs:ignore Baz.Qux, Foo.Bar -- baseline
 PHP
         ,
     ];
@@ -596,7 +607,7 @@ exit;
 PHP
         ,
     ];
-    private const STAR_PREFIX_IN_DOC_COMMENT = [
+    private const MULTILINE_DOC_COMMENT = [
         <<<'PHP'
 <?php
 /**
@@ -607,10 +618,11 @@ PHP
         [3 => ['Foo.Bar']],
         <<<'PHP'
 <?php
+// phpcs:disable Foo.Bar -- baseline
 /**
- * phpcs:ignore Foo.Bar -- baseline
  * test
  */
+// phpcs:enable Foo.Bar -- baseline
 PHP
         ,
     ];
@@ -677,6 +689,7 @@ PHP
         'on first line' => self::ON_FIRST_LINE,
         'on first line with multiple tokens' => self::ON_FIRST_LINE_WITH_MULTIPLE_TOKENS,
         'on first line with multiline string' => self::ON_FIRST_LINE_WITH_MULTILINE_STRING,
+        'on first line merge with existing' => self::ON_FIRST_LINE_MERGE_WITH_EXISTING,
         'multiple lines' => self::MULTIPLE_LINES,
         'multiple lines including first line' => self::MULTIPLE_LINES_INCLUDING_FIRST_LINE,
         'multiple rules per line' => self::MULTIPLE_RULES_PER_LINE,
@@ -707,7 +720,7 @@ PHP
         'above single comment block' => self::ABOVE_SINGLE_COMMENT_BLOCK,
         'star prefix in comment block' => self::STAR_PREFIX_IN_COMMENT_BLOCK,
         'star prefix in comment block at last line' => self::STAR_PREFIX_IN_COMMENT_BLOCK_LAST_LINE,
-        'star prefix in doc comment' => self::STAR_PREFIX_IN_DOC_COMMENT,
+        'multiline doc comment' => self::MULTILINE_DOC_COMMENT,
         'multiline string with multiple violations' => self::MULTI_LINE_STRING_WITH_MULTIPLE_VIOLATIONS,
         'multiline string violations firsta and second line' =>
             self::MULTI_LINE_STRING_VIOLATIONS_ON_FIRST_AND_SECOND_LINE,

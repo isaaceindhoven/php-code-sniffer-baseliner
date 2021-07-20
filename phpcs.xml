@@ -2,6 +2,7 @@
 <ruleset>
   <file>src</file>
   <file>tests</file>
+  <exclude-pattern>/tests/Fixtures/</exclude-pattern>
   <rule ref="ISAAC"/>
   <config name="testVersion" value="7.3-8.0"/>
   <arg name="extensions" value="php"/>
