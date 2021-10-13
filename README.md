@@ -21,12 +21,12 @@ It is also possible to install this package as a global composer dependency.
 In order to add `phpcs:ignore` and `phpcs:disable`/`phpcs:enable` instructions throughout your project, run:
 
 ```sh
-vendor/bin/phpcs-baseliner create-baseline
+./vendor/bin/phpcs-baseliner create-baseline
 ```
 
 ## How does it work?
 
-First, the tool runs `vendor/bin/phpcs` and captures the report. Based on the report output, it will add
+First, the tool runs `./vendor/bin/phpcs` and captures the report. Based on the report output, it will add
 `// phpcs:ignore` instructions to the source code for each violation. It will only ignore the sniffs that actually are
 violated. In rare cases, adding these instructions could introduce new violations. Therefore, this process is repeated
 until no violations are reported by `phpcs`.
@@ -39,7 +39,7 @@ PHP_CodeSniffer. The [Slevomat Coding Standard][slevomat-coding-standard] has sn
 and [`SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint`][property-type-hint-sniff]. We install
 Slevomat Coding Standard and add the sniffs to our ruleset in `phpcs.xml`.
 
-If we now run `vendor/bin/phpcs-baseliner create-baseline` in our project, it will add ignore instructions in all files
+If we now run `./vendor/bin/phpcs-baseliner create-baseline` in our project, it will add ignore instructions in all files
 not containing `declare(strict_types = 1);` statements or native property type declarations:
 
 ```diff
