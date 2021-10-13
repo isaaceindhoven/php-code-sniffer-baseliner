@@ -17,7 +17,7 @@ class Runner
 {
     public function run(string $basePath): Report
     {
-        $cliCommand = sprintf('vendor/bin/phpcs -q --report=json --basepath=%s', escapeshellarg($basePath));
+        $cliCommand = sprintf($basePath.'/vendor/bin/phpcs -q --report=json');
 
         exec($cliCommand, $output);
 
