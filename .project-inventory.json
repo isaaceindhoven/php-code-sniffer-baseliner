@@ -1,0 +1,6 @@
+{
+  "classification": "cli-application",
+  "jiraKey": "ICOMP",
+  "jiraComponent": "",
+  "jiraSummaryPrefix": "PHP CodeSniffer Baseliner"
+}
