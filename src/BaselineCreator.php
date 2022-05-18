@@ -17,27 +17,27 @@ class BaselineCreator
     /**
      * @var BasePathFinder
      */
-    private $basePathFinder;
+    private BasePathFinder $basePathFinder;
     /**
      * @var Runner
      */
-    private $runner;
+    private Runner $runner;
     /**
      * @var BaselineFactory
      */
-    private $baselineFactory;
+    private BaselineFactory $baselineFactory;
     /**
      * @var Filesystem
      */
-    private $filesystem;
+    private Filesystem $filesystem;
     /**
      * @var AddBaselineProcessor
      */
-    private $addBaselineProcessor;
+    private AddBaselineProcessor $addBaselineProcessor;
     /**
      * @var OutputWriter
      */
-    private $outputWriter;
+    private OutputWriter $outputWriter;
 
     public function __construct(
         BasePathFinder $basePathFinder,
@@ -95,7 +95,7 @@ class BaselineCreator
     }
 
     /**
-     * @param string[][] $ruleExclusionsByLineNumber
+     * @param array<array<string>> $ruleExclusionsByLineNumber
      */
     public function addRuleExclusionsByLineNumber(string $file, array $ruleExclusionsByLineNumber): bool
     {

@@ -18,7 +18,6 @@ use Throwable;
 
 use function array_shift;
 use function count;
-use function get_class;
 use function sprintf;
 
 use const PHP_EOL;
@@ -42,7 +41,7 @@ class Application
     /**
      * @var BaselineCreator
      */
-    private $baselineCreator;
+    private BaselineCreator $baselineCreator;
 
     public function __construct(
         BaselineCreator $baselineCreator
@@ -97,7 +96,7 @@ class Application
             $this->showHelp($command);
         } else {
             throw new InvalidArgumentException(
-                sprintf('Unable to handle command of type \'%s\'.', get_class($command))
+                sprintf('Unable to handle command of type \'%s\'.', $command::class)
             );
         }
     }

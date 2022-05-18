@@ -24,15 +24,15 @@ class Token
     /**
      * @var int
      */
-    private $type;
+    private int $type;
     /**
      * @var string
      */
-    private $contents;
+    private string $contents;
     /**
      * @var int
      */
-    private $startingLineNumber;
+    private int $startingLineNumber;
 
     public function __construct(int $type, string $contents, int $startingLineNumber)
     {

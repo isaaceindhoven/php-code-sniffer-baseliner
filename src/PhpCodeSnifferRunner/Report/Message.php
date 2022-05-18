@@ -9,31 +9,31 @@ class Message
     /**
      * @var string
      */
-    private $message;
+    private string $message;
     /**
      * @var string
      */
-    private $source;
+    private string $source;
     /**
      * @var int
      */
-    private $severity;
+    private int $severity;
     /**
      * @var bool
      */
-    private $fixable;
+    private bool $fixable;
     /**
      * @var string
      */
-    private $type;
+    private string $type;
     /**
      * @var int
      */
-    private $line;
+    private int $line;
     /**
      * @var int
      */
-    private $column;
+    private int $column;
 
     public function __construct(
         string $message,

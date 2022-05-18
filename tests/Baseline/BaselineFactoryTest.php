@@ -15,7 +15,7 @@ class BaselineFactoryTest extends TestCase
     /**
      * @var BaselineFactory
      */
-    private $baselineFactory;
+    private BaselineFactory $baselineFactory;
 
     protected function setUp(): void
     {

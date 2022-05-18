@@ -28,7 +28,7 @@ class AddBaselineProcessor
     /**
      * @var InstructionCommentLineParser
      */
-    private $ignoreCommentParser;
+    private InstructionCommentLineParser $ignoreCommentParser;
 
     public function __construct(
         InstructionCommentLineParser $ignoreCommentLineParser
@@ -37,7 +37,7 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param string[][] $ruleExclusionsByLineNumber
+     * @param array<array<string>> $ruleExclusionsByLineNumber
      */
     public function addRuleExclusionsByLineNumber(string $sourceCode, array $ruleExclusionsByLineNumber): string
     {
@@ -61,9 +61,9 @@ class AddBaselineProcessor
 
     /**
      * Inserts line(s) with comments to ignore specific rules.
-     * @param string[] $lines
-     * @param string[] $ruleExclusions
-     * @param int[] $lineNumbersAdded
+     * @param array<string> $lines
+     * @param array<string> $ruleExclusions
+     * @param array<int> $lineNumbersAdded
      */
     private function addRuleExclusions(
         array &$lines,
@@ -94,8 +94,8 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param string[] $lines
-     * @param string[] $ruleExclusions
+     * @param array<string> $lines
+     * @param array<string> $ruleExclusions
      */
     private function ignoreInline(
         array &$lines,
@@ -137,9 +137,9 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param string[] $lines
-     * @param string[] $ruleExclusions
-     * @param int[] $lineNumbersAdded
+     * @param array<string> $lines
+     * @param array<string> $ruleExclusions
+     * @param array<int> $lineNumbersAdded
      */
     private function insertEnableDisableComments(
         array &$lines,
@@ -164,8 +164,8 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param string[] $lines
-     * @param int[] $lineNumbersAdded
+     * @param array<string> $lines
+     * @param array<int> $lineNumbersAdded
      */
     private function insertOrMergeComment(
         array &$lines,
@@ -219,7 +219,7 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param int[] $lineNumbersAdded
+     * @param array<int> $lineNumbersAdded
      */
     private function getActualLineNumber(int $originalLineNumber, array $lineNumbersAdded): int
     {

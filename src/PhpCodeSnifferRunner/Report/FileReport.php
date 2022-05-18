@@ -9,18 +9,18 @@ class FileReport
     /**
      * @var int
      */
-    private $errorCount;
+    private int $errorCount;
     /**
      * @var int
      */
-    private $warningCount;
+    private int $warningCount;
     /**
-     * @var Message[]
+     * @var array<Message>
      */
-    private $messages;
+    private array $messages;
 
     /**
-     * @param Message[] $messages
+     * @param array<Message> $messages
      */
     public function __construct(int $errorCount, int $warningCount, array $messages)
     {
@@ -40,7 +40,7 @@ class FileReport
     }
 
     /**
-     * @return Message[]
+     * @return array<Message>
      */
     public function getMessages(): array
     {

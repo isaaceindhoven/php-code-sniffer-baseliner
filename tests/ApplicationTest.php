@@ -47,7 +47,7 @@ PHP;
     /**
      * @var Application
      */
-    private $application;
+    private Application $application;
 
     protected function setUp(): void
     {

@@ -9,15 +9,15 @@ class Totals
     /**
      * @var int
      */
-    private $errors;
+    private int $errors;
     /**
      * @var int
      */
-    private $warnings;
+    private int $warnings;
     /**
      * @var int
      */
-    private $fixable;
+    private int $fixable;
 
     public function __construct(int $errors, int $warnings, int $fixable)
     {

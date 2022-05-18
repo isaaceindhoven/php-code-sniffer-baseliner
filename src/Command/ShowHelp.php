@@ -9,7 +9,7 @@ class ShowHelp
     /**
      * @var string
      */
-    private $commandName;
+    private string $commandName;
 
     public function __construct(string $commandName)
     {

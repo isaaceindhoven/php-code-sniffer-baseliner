@@ -7,12 +7,12 @@ namespace ISAAC\CodeSnifferBaseliner\Baseline;
 class Baseline
 {
     /**
-     * @var string[][][]
+     * @var array<array<array<string>>>
      */
-    private $violatedRulesByFileAndLineNumber;
+    private array $violatedRulesByFileAndLineNumber;
 
     /**
-     * @param string[][][] $violatedRulesByFileAndLineNumber
+     * @param array<array<array<string>>> $violatedRulesByFileAndLineNumber
      */
     public function __construct(array $violatedRulesByFileAndLineNumber)
     {
@@ -20,7 +20,7 @@ class Baseline
     }
 
     /**
-     * @return string[][][]
+     * @return array<array<array<string>>>
      */
     public function getViolatedRulesByFileAndLineNumber(): array
     {

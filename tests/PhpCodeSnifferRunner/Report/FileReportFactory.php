@@ -13,7 +13,7 @@ use function count;
 class FileReportFactory
 {
     /**
-     * @param Message[] $messagesOrDefault
+     * @param ?array<Message> $messagesOrDefault
      */
     public static function create(
         ?int $errorCount = null,
@@ -37,7 +37,7 @@ class FileReportFactory
     }
 
     /**
-     * @param Message[] $messages
+     * @param ?array<Message> $messages
      */
     public static function createWithMessages(?array $messages = null): FileReport
     {

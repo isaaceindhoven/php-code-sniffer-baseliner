@@ -18,27 +18,27 @@ class InstructionComment
     /**
      * @var string
      */
-    private $indentation;
+    private string $indentation;
     /**
      * @var string
      */
-    private $commentStart;
+    private string $commentStart;
     /**
      * @var string
      */
-    private $instruction;
+    private string $instruction;
     /**
-     * @var string[]
+     * @var array<string>
      */
-    private $rules;
+    private array $rules;
     /**
-     * @var string[]
+     * @var array<string>
      */
-    private $messages;
+    private array $messages;
 
     /**
-     * @param string[] $rules
-     * @param string[] $messages
+     * @param array<string> $rules
+     * @param array<string> $messages
      */
     public function __construct(
         string $instruction,

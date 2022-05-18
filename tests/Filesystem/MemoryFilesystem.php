@@ -9,9 +9,9 @@ use ISAAC\CodeSnifferBaseliner\Filesystem\Filesystem;
 class MemoryFilesystem implements Filesystem
 {
     /**
-     * @var string[]
+     * @var array<string>
      */
-    private $fileContentsByFilename = [];
+    private array $fileContentsByFilename = [];
 
     public function readContents(string $filename): string
     {
