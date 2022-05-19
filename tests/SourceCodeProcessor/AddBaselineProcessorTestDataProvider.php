@@ -728,7 +728,7 @@ PHP
     ];
 
     /**
-     * @return mixed[]
+     * @return array<mixed>
      */
     public static function provide(): array
     {

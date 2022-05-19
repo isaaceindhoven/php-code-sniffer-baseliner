@@ -28,17 +28,17 @@ class InstructionComment
      */
     private $instruction;
     /**
-     * @var string[]
+     * @var array<string>
      */
     private $rules;
     /**
-     * @var string[]
+     * @var array<string>
      */
     private $messages;
 
     /**
-     * @param string[] $rules
-     * @param string[] $messages
+     * @param array<string> $rules
+     * @param array<string> $messages
      */
     public function __construct(
         string $instruction,

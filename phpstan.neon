@@ -2,8 +2,8 @@ parameters:
     paths:
     - '.'
     level: 'max'
-    excludes_analyse:
-    - './vendor'
-    - './tests/Fixtures'
+    excludePaths:
+    - './vendor/*'
+    - './tests/Fixtures/*'
 includes:
 	- vendor/phpstan/phpstan/conf/bleedingEdge.neon

@@ -45,7 +45,7 @@ class InstructionCommentLineParser
 
     /**
      * @param string $commaSeparatedRules
-     * @return string[]
+     * @return array<string>
      */
     private function parseRules(string $commaSeparatedRules): array
     {
@@ -62,7 +62,7 @@ class InstructionCommentLineParser
 
     /**
      * @param string $semiColonSeparatedMessages
-     * @return string[]
+     * @return array<string>
      */
     private function parseMessages(string $semiColonSeparatedMessages): array
     {
