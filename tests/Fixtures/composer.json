@@ -1,5 +1,16 @@
 {
   "require": {
-    "isaac/php-code-sniffer-standard": "^22.0"
+    "isaac/php-code-sniffer-standard": "*"
+  },
+  "repositories": {
+    "isaac/php-code-sniffer-standard": {
+      "type": "path",
+      "url": "../../"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
