@@ -9,7 +9,7 @@ use ISAAC\CodeSnifferBaseliner\Filesystem\Filesystem;
 class MemoryFilesystem implements Filesystem
 {
     /**
-     * @var string[]
+     * @var array<string>
      */
     private $fileContentsByFilename = [];
 

@@ -43,7 +43,7 @@ class ReportDeserializer
     }
 
     /**
-     * @return FileReport[]
+     * @return array<FileReport>
      */
     private function denormalizeFileReports(object $normalizedFiles): array
     {
@@ -64,8 +64,8 @@ class ReportDeserializer
     }
 
     /**
-     * @param mixed[] $normalizedMessages
-     * @return Message[]
+     * @param array<mixed> $normalizedMessages
+     * @return array<Message>
      */
     private function denormalizeMessages(array $normalizedMessages): array
     {
