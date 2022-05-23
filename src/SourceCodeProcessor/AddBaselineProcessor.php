@@ -12,6 +12,7 @@ use function array_splice;
 use function explode;
 use function implode;
 use function is_array;
+use function is_string;
 use function preg_match;
 use function preg_split;
 use function rtrim;
@@ -37,7 +38,7 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param string[][] $ruleExclusionsByLineNumber
+     * @param array<array<string>> $ruleExclusionsByLineNumber
      */
     public function addRuleExclusionsByLineNumber(string $sourceCode, array $ruleExclusionsByLineNumber): string
     {
@@ -61,9 +62,9 @@ class AddBaselineProcessor
 
     /**
      * Inserts line(s) with comments to ignore specific rules.
-     * @param string[] $lines
-     * @param string[] $ruleExclusions
-     * @param int[] $lineNumbersAdded
+     * @param array<string> $lines
+     * @param array<string> $ruleExclusions
+     * @param array<int> $lineNumbersAdded
      */
     private function addRuleExclusions(
         array &$lines,
@@ -94,8 +95,8 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param string[] $lines
-     * @param string[] $ruleExclusions
+     * @param array<string> $lines
+     * @param array<string> $ruleExclusions
      */
     private function ignoreInline(
         array &$lines,
@@ -137,9 +138,9 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param string[] $lines
-     * @param string[] $ruleExclusions
-     * @param int[] $lineNumbersAdded
+     * @param array<string> $lines
+     * @param array<string> $ruleExclusions
+     * @param array<int> $lineNumbersAdded
      */
     private function insertEnableDisableComments(
         array &$lines,
@@ -164,8 +165,8 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param string[] $lines
-     * @param int[] $lineNumbersAdded
+     * @param array<string> $lines
+     * @param array<int> $lineNumbersAdded
      */
     private function insertOrMergeComment(
         array &$lines,
@@ -195,7 +196,7 @@ class AddBaselineProcessor
     private function determineIndentation(string $line): string
     {
         preg_match('`^(?<indent>\\s*)[^\\s]`', $line, $matches);
-        if (!is_array($matches) || !array_key_exists('indent', $matches)) {
+        if (!is_array($matches) || !array_key_exists('indent', $matches) || !is_string($matches['indent'])) {
             return '';
         }
         return $matches['indent'];
@@ -219,7 +220,7 @@ class AddBaselineProcessor
     }
 
     /**
-     * @param int[] $lineNumbersAdded
+     * @param array<int> $lineNumbersAdded
      */
     private function getActualLineNumber(int $originalLineNumber, array $lineNumbersAdded): int
     {

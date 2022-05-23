@@ -14,7 +14,7 @@ use function array_sum;
 class ReportFactory
 {
     /**
-     * @param FileReport[] $fileReportsByFilenameOrDefault
+     * @param array<FileReport>|null $fileReportsByFilenameOrDefault
      */
     public static function create(
         ?Totals $totals = null,
@@ -35,7 +35,7 @@ class ReportFactory
     }
 
     /**
-     * @param FileReport[] $fileReportsByFilename
+     * @param array<FileReport> $fileReportsByFilename
      */
     public static function createWithFileReportsByFilename(array $fileReportsByFilename): Report
     {

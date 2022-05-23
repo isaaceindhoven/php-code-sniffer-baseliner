@@ -95,7 +95,7 @@ class BaselineCreator
     }
 
     /**
-     * @param string[][] $ruleExclusionsByLineNumber
+     * @param array<array<string>> $ruleExclusionsByLineNumber
      */
     public function addRuleExclusionsByLineNumber(string $file, array $ruleExclusionsByLineNumber): bool
     {

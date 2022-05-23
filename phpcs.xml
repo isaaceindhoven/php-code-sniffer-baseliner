@@ -4,7 +4,8 @@
   <file>tests</file>
   <exclude-pattern>/tests/Fixtures/</exclude-pattern>
   <rule ref="ISAAC"/>
-  <config name="testVersion" value="7.3-8.0"/>
+  <config name="php_version" value="70300"/>
+  <config name="testVersion" value="7.3-8.1"/>
   <arg name="extensions" value="php"/>
   <arg name="cache"/>
 </ruleset>

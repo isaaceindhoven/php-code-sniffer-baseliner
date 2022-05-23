@@ -24,16 +24,16 @@ use const PHP_EOL;
 class TokenizedSourceCode implements IteratorAggregate
 {
     /**
-     * @var Token[][]
+     * @var array<array<Token>>
      */
     private $tokensByStartingLineNumber = [];
     /**
-     * @var array<int, Token[]>
+     * @var array<int, array<Token>>
      */
     private $tokensByEndingLineNumber = [];
 
     /**
-     * @param Token[] $tokens
+     * @param array<Token> $tokens
      */
     public function __construct(array $tokens)
     {

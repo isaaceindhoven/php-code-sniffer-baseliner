@@ -46,7 +46,7 @@ class PropertyAccessor
     }
 
     /**
-     * @return mixed[]
+     * @return array<mixed>
      */
     public static function getArrayProperty(object $object, string $propertyName, string $objectName): array
     {

@@ -4,7 +4,7 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": "~7.3.0 || ~7.4.0 || ~8.0.0",
+        "php": "~7.3.0 || ~7.4.0 || ~8.0.0 || ~8.1.0",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
@@ -24,16 +24,20 @@
         "bin/phpcs-baseliner"
     ],
     "require-dev": {
-        "isaac/php-code-sniffer-standard": "^21.0",
+        "isaac/php-code-sniffer-standard": "^27.0",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "^0.12.65",
-        "phpstan/phpstan-phpunit": "^0.12.17",
-        "phpstan/phpstan-strict-rules": "^0.12.8",
+        "phpstan/phpstan": "^1.6.8",
+        "phpstan/phpstan-phpunit": "^1.1.1",
+        "phpstan/phpstan-strict-rules": "^1.2.3",
         "phpunit/phpunit": "^9.5"
     },
     "minimum-stability": "stable",
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
+        }
     }
 }
