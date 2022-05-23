@@ -37,7 +37,7 @@ class FileReportFactory
     }
 
     /**
-     * @param ?array<Message> $messages
+     * @param array<Message>|null $messages
      */
     public static function createWithMessages(?array $messages = null): FileReport
     {
