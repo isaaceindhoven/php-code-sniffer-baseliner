@@ -19,6 +19,7 @@ class Runner
     {
         $cliCommand = sprintf('vendor/bin/phpcs -q --report=json --basepath=%s', escapeshellarg($basePath));
 
+        // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
         exec($cliCommand, $output);
 
         if (!array_key_exists(0, $output)) {

@@ -67,6 +67,7 @@ PHP;
         self::assertNotFalse($originalCwd);
         chdir(sprintf('%s/Fixtures', __DIR__));
         try {
+            // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
             shell_exec('composer install 2>&1');
             ob_start();
             $this->application->run('phpcs-baseliner', 'create-baseline');
