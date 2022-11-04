@@ -11,8 +11,6 @@ use function array_key_exists;
 use function array_splice;
 use function explode;
 use function implode;
-use function is_array;
-use function is_string;
 use function preg_match;
 use function preg_split;
 use function rtrim;
@@ -196,7 +194,7 @@ class AddBaselineProcessor
     private function determineIndentation(string $line): string
     {
         preg_match('`^(?<indent>\\s*)[^\\s]`', $line, $matches);
-        if (!is_array($matches) || !array_key_exists('indent', $matches) || !is_string($matches['indent'])) {
+        if (!array_key_exists('indent', $matches)) {
             return '';
         }
         return $matches['indent'];
