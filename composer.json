@@ -4,7 +4,7 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": "~7.3.0 || ~7.4.0 || ~8.0.0 || ~8.1.0",
+        "php": "~7.3.0 || ~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0",
         "ext-dom": "*",
         "ext-json": "*",
         "ext-simplexml": "*",
@@ -24,7 +24,7 @@
         "bin/phpcs-baseliner"
     ],
     "require-dev": {
-        "isaac/php-code-sniffer-standard": "^27.0",
+        "isaac/php-code-sniffer-standard": "^28.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.6.8",
         "phpstan/phpstan-phpunit": "^1.1.1",

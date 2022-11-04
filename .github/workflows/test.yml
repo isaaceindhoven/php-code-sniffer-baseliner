@@ -1,0 +1,36 @@
+name: test
+
+on:
+  push:
+    branches:
+    - "develop"
+    - "master"
+  pull_request: ~
+
+jobs:
+  test:
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      matrix:
+        php-version:
+        - "7.3"
+        - "7.4"
+        - "8.0"
+        - "8.1"
+        - "8.2"
+        composer-dependency-versions:
+        - "lowest"
+        - "highest"
+
+    steps:
+    - uses: "actions/checkout@v2"
+    - uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: "${{ matrix.php-version }}"
+    - uses: "ramsey/composer-install@v2"
+      with:
+        dependency-versions: "${{ matrix.composer-dependency-versions }}"
+    - run: "vendor/bin/phpcs"
+    - run: "vendor/bin/phpstan"
+    - run: "vendor/bin/phpunit"
