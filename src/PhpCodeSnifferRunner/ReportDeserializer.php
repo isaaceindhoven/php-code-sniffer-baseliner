@@ -37,8 +37,8 @@ class ReportDeserializer
     {
         return new Totals(
             PropertyAccessor::getIntegerProperty($normalizedTotals, 'errors', 'totals'),
-            PropertyAccessor::getIntegerProperty($normalizedTotals, 'errors', 'totals'),
-            PropertyAccessor::getIntegerProperty($normalizedTotals, 'errors', 'totals')
+            PropertyAccessor::getIntegerProperty($normalizedTotals, 'warnings', 'totals'),
+            PropertyAccessor::getIntegerProperty($normalizedTotals, 'fixable', 'totals')
         );
     }
 
