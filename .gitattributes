@@ -5,3 +5,4 @@
 /phpunit.xml export-ignore
 /phpcs.xml export-ignore
 /phpstan.neon export-ignore
+/CHANGELOG.md merge=union
