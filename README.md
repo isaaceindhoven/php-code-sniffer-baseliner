@@ -1,3 +1,7 @@
+Renamed and moved to iO CodeSniffer Standard
+===========
+This repository has been archived and renamed, moved to [iO PHP_CodeSniffer Baseliner](https://github.com/iodigital-com/php-code-sniffer-baseliner). Feature sniffs and changes will be processed in the iO repository.
+
 # PHP_CodeSniffer Baseliner
 
 This tool enables you to integrate [PHP_CodeSniffer][php-code-sniffer] into an existing
