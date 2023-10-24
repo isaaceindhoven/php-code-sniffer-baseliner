@@ -1,6 +1,10 @@
 {
     "name": "isaac/php-code-sniffer-baseliner",
     "description": "ISAAC PHP Code Sniffer Baseliner",
+    "suggest": {
+        "iodigital-com/php-code-sniffer-baseliner": "Use iO PHP_CodeSniffer Baseliner instead."
+    },
+    "abandoned": "iodigital-com/php-code-sniffer-baseliner",
     "type": "library",
     "license": "MIT",
     "require": {
